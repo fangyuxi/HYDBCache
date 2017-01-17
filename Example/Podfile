@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'HYCache_Example' do
+  pod 'HYCache', :path => '../'
+
+  target 'HYCache_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
