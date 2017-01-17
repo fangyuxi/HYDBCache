@@ -1,0 +1,16 @@
+PODS:
+  - HYCache (0.7)
+
+DEPENDENCIES:
+  - HYCache (from `../`)
+
+EXTERNAL SOURCES:
+  HYCache:
+    :path: ../
+
+SPEC CHECKSUMS:
+  HYCache: 9419c4b6327be4730be445fba65a39348a9b3f50
+
+PODFILE CHECKSUM: 2cce52b331e8d6a90eca48107efa367b34f98c0b
+
+COCOAPODS: 1.1.1

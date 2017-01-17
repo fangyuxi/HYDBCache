@@ -1,0 +1,6 @@
+framework module Pods_HYCache_Tests {
+  umbrella header "Pods-HYCache_Tests-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -1,0 +1,765 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0ACD999D1EFECCE2B7CEA62A36DC9D21 /* Pods-HYCache_Example-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 32429CF1C1DD2A4DBE5ECEE2969C7DAF /* Pods-HYCache_Example-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0F79547F8A8531E8E172F53BD2F3A7EC /* Pods-HYCache_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = D2705B2AB3E73877A3E9468B071D3FAC /* Pods-HYCache_Tests-dummy.m */; };
+		244D82BE704FDE6D3B480D671D43BCA7 /* Pods-HYCache_Tests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B2E5F4B25481C1109EC8D1390D7259B /* Pods-HYCache_Tests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		31B6948174EC497A864DC124D6D9F8CF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBB3DE36805AF21409EC968A9691732F /* Foundation.framework */; };
+		33C54D00709A338AF542FCFC5E8FC9FE /* HYDBRunnner.m in Sources */ = {isa = PBXBuildFile; fileRef = 52813005659B26BE50E13443697AA601 /* HYDBRunnner.m */; };
+		411964E2AB25D51FE82D7A59188C3895 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBB3DE36805AF21409EC968A9691732F /* Foundation.framework */; };
+		41457456F4D1AC3C0AB05FEB3D0E7897 /* HYDiskCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CA454D15E42FAEFF0855AD82C1DA24D5 /* HYDiskCache.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4E0D63ED5251DF3D8BF408839DA521A8 /* HYDiskCacheItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 65FBD8607829AE9E9C6BC2966005F8D1 /* HYDiskCacheItem.m */; };
+		60F2D68F2BF17D412FAA6E0851B49334 /* HYCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AB4B912FDD25EBD489A5ED9F501FB0A /* HYCache.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		63982A2EFADB85335876192D99955983 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBB3DE36805AF21409EC968A9691732F /* Foundation.framework */; };
+		6981DFB773F3F10E965B24264CD2B055 /* HYMemoryCache.m in Sources */ = {isa = PBXBuildFile; fileRef = EFEF9CCFD29A49F771DFF5CF043DFFFE /* HYMemoryCache.m */; };
+		6BD1CA09373F20F0AE6A34767779E8A3 /* HYDiskCacheItem.h in Headers */ = {isa = PBXBuildFile; fileRef = BB8A08A488426114E02A22D012BB7E0A /* HYDiskCacheItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		75F31EBFD40B44D05C1A94271C8A1012 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = E399109F9EFBA44B71899F45E31B2F13 /* sqlite3.c */; };
+		82577A315ECBFA31BDF1EE3E6C178097 /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = 20840FA0C78C0B29891E2284435C1ADE /* sqlite3.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8C0C2AA5785FAF2C68BD7F5636249925 /* HYCache-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = A228350C5E5BF1DC7E33C3A710BF7FEB /* HYCache-dummy.m */; };
+		8FFEC0D22A166FA577FAA5D107D99DE9 /* HYDiskCache.m in Sources */ = {isa = PBXBuildFile; fileRef = A3EE4C022277307F2AA4E319C27BBA2B /* HYDiskCache.m */; };
+		ADDCEBF1EF765934A1D1DBF431231BAD /* HYDBRunnner.h in Headers */ = {isa = PBXBuildFile; fileRef = 9696E89697862CD774E7F275C63DD997 /* HYDBRunnner.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D400F12E9C02152016AC5E8B185DEF33 /* HYCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C4996FCEC9E061A0CB101042362BF1F /* HYCache.m */; };
+		D57155F3078D78ADD8CA8B20789CEC75 /* HYMemoryCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 21A1312AB61892E4917A1E06CDADA4FD /* HYMemoryCache.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E28CA4F30CAD2E8F005641FE348E9A46 /* HYCache-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AB96E80128450D552F2976C524262A7 /* HYCache-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		ED20CBBEE7D12B5914B8CB275DD9D93A /* Pods-HYCache_Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = C9C6E4DDE6C5613BC5817D634148D050 /* Pods-HYCache_Example-dummy.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		BE0827EF9C8FD359C1D4EE9D392949B5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6F5B4E8657F79A46DD3D20CCE3943A03;
+			remoteInfo = HYCache;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0058F5149A5EB733CE5A55CC98939906 /* Pods_HYCache_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_HYCache_Example.framework; path = "Pods-HYCache_Example.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0168E83F0CC7DC31A2AB03280493AF82 /* Pods-HYCache_Example-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-HYCache_Example-acknowledgements.plist"; sourceTree = "<group>"; };
+		057246EF666B822F49D911FF0322C484 /* HYCache.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = HYCache.framework; path = HYCache.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		05C492B1F7CC57EBC8EC662411F43BF5 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		20840FA0C78C0B29891E2284435C1ADE /* sqlite3.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = sqlite3.h; sourceTree = "<group>"; };
+		217541153E2CFCFCDDF21E0A50E2155D /* Pods-HYCache_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-HYCache_Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		21A1312AB61892E4917A1E06CDADA4FD /* HYMemoryCache.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = HYMemoryCache.h; sourceTree = "<group>"; };
+		32429CF1C1DD2A4DBE5ECEE2969C7DAF /* Pods-HYCache_Example-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-HYCache_Example-umbrella.h"; sourceTree = "<group>"; };
+		34161E5CE2625FCCC7300900B78C809F /* HYCache.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = HYCache.xcconfig; sourceTree = "<group>"; };
+		3DF5C0F47E44EA6321BB54E78740225E /* Pods-HYCache_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-HYCache_Example.debug.xcconfig"; sourceTree = "<group>"; };
+		41288CEE8E9E886161372EA05F9DAF6D /* Pods-HYCache_Tests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-HYCache_Tests-acknowledgements.plist"; sourceTree = "<group>"; };
+		4144939A088708F1F99F0F30D56DDAFC /* Pods-HYCache_Example-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-HYCache_Example-resources.sh"; sourceTree = "<group>"; };
+		42884574E7ABB46D931D78F33FC5BCFF /* Pods_HYCache_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_HYCache_Tests.framework; path = "Pods-HYCache_Tests.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		52813005659B26BE50E13443697AA601 /* HYDBRunnner.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = HYDBRunnner.m; sourceTree = "<group>"; };
+		5A4E32D65F0E4CB51D59361B0AC13AC7 /* Pods-HYCache_Tests-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-HYCache_Tests-resources.sh"; sourceTree = "<group>"; };
+		5F235B66224C9A2C38A4EAD64F2BA402 /* HYCache-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "HYCache-prefix.pch"; sourceTree = "<group>"; };
+		65FBD8607829AE9E9C6BC2966005F8D1 /* HYDiskCacheItem.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = HYDiskCacheItem.m; sourceTree = "<group>"; };
+		6B2E5F4B25481C1109EC8D1390D7259B /* Pods-HYCache_Tests-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-HYCache_Tests-umbrella.h"; sourceTree = "<group>"; };
+		6B698DA1EC49E106AE52E4F3E0B832F5 /* Pods-HYCache_Tests-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-HYCache_Tests-frameworks.sh"; sourceTree = "<group>"; };
+		6C4996FCEC9E061A0CB101042362BF1F /* HYCache.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = HYCache.m; sourceTree = "<group>"; };
+		6EFD5B953C1A950BFB4FC88E52F8DAEE /* Pods-HYCache_Example-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-HYCache_Example-frameworks.sh"; sourceTree = "<group>"; };
+		749D9FDA7DA143FEA76601577B41C974 /* Pods-HYCache_Example.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; path = "Pods-HYCache_Example.modulemap"; sourceTree = "<group>"; };
+		7AB96E80128450D552F2976C524262A7 /* HYCache-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "HYCache-umbrella.h"; sourceTree = "<group>"; };
+		83D545281FC5701ED472981FFF1EBF4E /* Pods-HYCache_Tests.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; path = "Pods-HYCache_Tests.modulemap"; sourceTree = "<group>"; };
+		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		9696E89697862CD774E7F275C63DD997 /* HYDBRunnner.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = HYDBRunnner.h; sourceTree = "<group>"; };
+		9AB4B912FDD25EBD489A5ED9F501FB0A /* HYCache.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = HYCache.h; sourceTree = "<group>"; };
+		9EE5D4B81BE349FE8DB6D4C1C46A4FE5 /* Pods-HYCache_Example-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-HYCache_Example-acknowledgements.markdown"; sourceTree = "<group>"; };
+		A228350C5E5BF1DC7E33C3A710BF7FEB /* HYCache-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "HYCache-dummy.m"; sourceTree = "<group>"; };
+		A3EE4C022277307F2AA4E319C27BBA2B /* HYDiskCache.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = HYDiskCache.m; sourceTree = "<group>"; };
+		AAD30CB5E92CC2D61B79F1D61CB5D495 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AB744A74495C20D056416D541C8CDBC2 /* Pods-HYCache_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-HYCache_Tests.release.xcconfig"; sourceTree = "<group>"; };
+		B0081748559CBEE6D1A160DFD868E7A8 /* HYCache.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; path = HYCache.modulemap; sourceTree = "<group>"; };
+		BB8A08A488426114E02A22D012BB7E0A /* HYDiskCacheItem.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = HYDiskCacheItem.h; sourceTree = "<group>"; };
+		C8806710538B99F578A29019B1F80C69 /* Pods-HYCache_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-HYCache_Example.release.xcconfig"; sourceTree = "<group>"; };
+		C9C6E4DDE6C5613BC5817D634148D050 /* Pods-HYCache_Example-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-HYCache_Example-dummy.m"; sourceTree = "<group>"; };
+		CA454D15E42FAEFF0855AD82C1DA24D5 /* HYDiskCache.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = HYDiskCache.h; sourceTree = "<group>"; };
+		CB5E898AF8921E1E7851BECE904B2126 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CBB3DE36805AF21409EC968A9691732F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		D2705B2AB3E73877A3E9468B071D3FAC /* Pods-HYCache_Tests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-HYCache_Tests-dummy.m"; sourceTree = "<group>"; };
+		DD54969B74FEF629B869F783CA23B52B /* Pods-HYCache_Tests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-HYCache_Tests-acknowledgements.markdown"; sourceTree = "<group>"; };
+		E399109F9EFBA44B71899F45E31B2F13 /* sqlite3.c */ = {isa = PBXFileReference; includeInIndex = 1; path = sqlite3.c; sourceTree = "<group>"; };
+		EFEF9CCFD29A49F771DFF5CF043DFFFE /* HYMemoryCache.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = HYMemoryCache.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3361B2568AD9A2928158EB3EF5D13A8F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				31B6948174EC497A864DC124D6D9F8CF /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6EDA2BC4A50BCF1DA0DECF641F43319C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				63982A2EFADB85335876192D99955983 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		82793197CD29CB9849CFC153F075827D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				411964E2AB25D51FE82D7A59188C3895 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0589F4D4A7BEF6F3C841D4ED3C83A1F9 /* HYCache */ = {
+			isa = PBXGroup;
+			children = (
+				722D342EF9FF010B7E32BBA233EDD662 /* HYCache */,
+				ADA03DBB4668D058FA45F6A19BD83FD8 /* Support Files */,
+			);
+			name = HYCache;
+			path = ../..;
+			sourceTree = "<group>";
+		};
+		26A7E149ABDE4E28F24AC8A51EC61C9E /* Development Pods */ = {
+			isa = PBXGroup;
+			children = (
+				0589F4D4A7BEF6F3C841D4ED3C83A1F9 /* HYCache */,
+			);
+			name = "Development Pods";
+			sourceTree = "<group>";
+		};
+		2D9B89D6B8FA74DBE1C92040834A92E1 /* Pods-HYCache_Example */ = {
+			isa = PBXGroup;
+			children = (
+				CB5E898AF8921E1E7851BECE904B2126 /* Info.plist */,
+				749D9FDA7DA143FEA76601577B41C974 /* Pods-HYCache_Example.modulemap */,
+				9EE5D4B81BE349FE8DB6D4C1C46A4FE5 /* Pods-HYCache_Example-acknowledgements.markdown */,
+				0168E83F0CC7DC31A2AB03280493AF82 /* Pods-HYCache_Example-acknowledgements.plist */,
+				C9C6E4DDE6C5613BC5817D634148D050 /* Pods-HYCache_Example-dummy.m */,
+				6EFD5B953C1A950BFB4FC88E52F8DAEE /* Pods-HYCache_Example-frameworks.sh */,
+				4144939A088708F1F99F0F30D56DDAFC /* Pods-HYCache_Example-resources.sh */,
+				32429CF1C1DD2A4DBE5ECEE2969C7DAF /* Pods-HYCache_Example-umbrella.h */,
+				3DF5C0F47E44EA6321BB54E78740225E /* Pods-HYCache_Example.debug.xcconfig */,
+				C8806710538B99F578A29019B1F80C69 /* Pods-HYCache_Example.release.xcconfig */,
+			);
+			name = "Pods-HYCache_Example";
+			path = "Target Support Files/Pods-HYCache_Example";
+			sourceTree = "<group>";
+		};
+		39575F5B15DCC6DF0084498357975202 /* Pods-HYCache_Tests */ = {
+			isa = PBXGroup;
+			children = (
+				AAD30CB5E92CC2D61B79F1D61CB5D495 /* Info.plist */,
+				83D545281FC5701ED472981FFF1EBF4E /* Pods-HYCache_Tests.modulemap */,
+				DD54969B74FEF629B869F783CA23B52B /* Pods-HYCache_Tests-acknowledgements.markdown */,
+				41288CEE8E9E886161372EA05F9DAF6D /* Pods-HYCache_Tests-acknowledgements.plist */,
+				D2705B2AB3E73877A3E9468B071D3FAC /* Pods-HYCache_Tests-dummy.m */,
+				6B698DA1EC49E106AE52E4F3E0B832F5 /* Pods-HYCache_Tests-frameworks.sh */,
+				5A4E32D65F0E4CB51D59361B0AC13AC7 /* Pods-HYCache_Tests-resources.sh */,
+				6B2E5F4B25481C1109EC8D1390D7259B /* Pods-HYCache_Tests-umbrella.h */,
+				217541153E2CFCFCDDF21E0A50E2155D /* Pods-HYCache_Tests.debug.xcconfig */,
+				AB744A74495C20D056416D541C8CDBC2 /* Pods-HYCache_Tests.release.xcconfig */,
+			);
+			name = "Pods-HYCache_Tests";
+			path = "Target Support Files/Pods-HYCache_Tests";
+			sourceTree = "<group>";
+		};
+		44C1BD92DF7BB6319C2F52EE1C5C7F2D /* HYDiskCache */ = {
+			isa = PBXGroup;
+			children = (
+				9696E89697862CD774E7F275C63DD997 /* HYDBRunnner.h */,
+				52813005659B26BE50E13443697AA601 /* HYDBRunnner.m */,
+				CA454D15E42FAEFF0855AD82C1DA24D5 /* HYDiskCache.h */,
+				A3EE4C022277307F2AA4E319C27BBA2B /* HYDiskCache.m */,
+				BB8A08A488426114E02A22D012BB7E0A /* HYDiskCacheItem.h */,
+				65FBD8607829AE9E9C6BC2966005F8D1 /* HYDiskCacheItem.m */,
+				E399109F9EFBA44B71899F45E31B2F13 /* sqlite3.c */,
+				20840FA0C78C0B29891E2284435C1ADE /* sqlite3.h */,
+			);
+			name = HYDiskCache;
+			path = HYDiskCache;
+			sourceTree = "<group>";
+		};
+		47AA20D96E36E355C63B5162D9A07479 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				9AB4B912FDD25EBD489A5ED9F501FB0A /* HYCache.h */,
+				6C4996FCEC9E061A0CB101042362BF1F /* HYCache.m */,
+				44C1BD92DF7BB6319C2F52EE1C5C7F2D /* HYDiskCache */,
+				CA202612B6C3422626DFBCDEA66F8B73 /* HYMemoryCache */,
+			);
+			name = Classes;
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		6681CCE358981027F8C199979FC3C324 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				057246EF666B822F49D911FF0322C484 /* HYCache.framework */,
+				0058F5149A5EB733CE5A55CC98939906 /* Pods_HYCache_Example.framework */,
+				42884574E7ABB46D931D78F33FC5BCFF /* Pods_HYCache_Tests.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		722D342EF9FF010B7E32BBA233EDD662 /* HYCache */ = {
+			isa = PBXGroup;
+			children = (
+				47AA20D96E36E355C63B5162D9A07479 /* Classes */,
+			);
+			name = HYCache;
+			path = HYCache;
+			sourceTree = "<group>";
+		};
+		7531C8F8DE19F1AA3C8A7AC97A91DC29 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				CBB3DE36805AF21409EC968A9691732F /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		7DB346D0F39D3F0E887471402A8071AB = {
+			isa = PBXGroup;
+			children = (
+				93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */,
+				26A7E149ABDE4E28F24AC8A51EC61C9E /* Development Pods */,
+				BC3CA7F9E30CC8F7E2DD044DD34432FC /* Frameworks */,
+				6681CCE358981027F8C199979FC3C324 /* Products */,
+				EAD3AE19087F50CC75D9031005612633 /* Targets Support Files */,
+			);
+			sourceTree = "<group>";
+		};
+		ADA03DBB4668D058FA45F6A19BD83FD8 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				B0081748559CBEE6D1A160DFD868E7A8 /* HYCache.modulemap */,
+				34161E5CE2625FCCC7300900B78C809F /* HYCache.xcconfig */,
+				A228350C5E5BF1DC7E33C3A710BF7FEB /* HYCache-dummy.m */,
+				5F235B66224C9A2C38A4EAD64F2BA402 /* HYCache-prefix.pch */,
+				7AB96E80128450D552F2976C524262A7 /* HYCache-umbrella.h */,
+				05C492B1F7CC57EBC8EC662411F43BF5 /* Info.plist */,
+			);
+			name = "Support Files";
+			path = "Example/Pods/Target Support Files/HYCache";
+			sourceTree = "<group>";
+		};
+		BC3CA7F9E30CC8F7E2DD044DD34432FC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				7531C8F8DE19F1AA3C8A7AC97A91DC29 /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CA202612B6C3422626DFBCDEA66F8B73 /* HYMemoryCache */ = {
+			isa = PBXGroup;
+			children = (
+				21A1312AB61892E4917A1E06CDADA4FD /* HYMemoryCache.h */,
+				EFEF9CCFD29A49F771DFF5CF043DFFFE /* HYMemoryCache.m */,
+			);
+			name = HYMemoryCache;
+			path = HYMemoryCache;
+			sourceTree = "<group>";
+		};
+		EAD3AE19087F50CC75D9031005612633 /* Targets Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				2D9B89D6B8FA74DBE1C92040834A92E1 /* Pods-HYCache_Example */,
+				39575F5B15DCC6DF0084498357975202 /* Pods-HYCache_Tests */,
+			);
+			name = "Targets Support Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		28A288DDD357F0926D7C7CFAA807D5E3 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0ACD999D1EFECCE2B7CEA62A36DC9D21 /* Pods-HYCache_Example-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B896192C64D1D2893018378A7A0C7352 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E28CA4F30CAD2E8F005641FE348E9A46 /* HYCache-umbrella.h in Headers */,
+				60F2D68F2BF17D412FAA6E0851B49334 /* HYCache.h in Headers */,
+				ADDCEBF1EF765934A1D1DBF431231BAD /* HYDBRunnner.h in Headers */,
+				41457456F4D1AC3C0AB05FEB3D0E7897 /* HYDiskCache.h in Headers */,
+				6BD1CA09373F20F0AE6A34767779E8A3 /* HYDiskCacheItem.h in Headers */,
+				D57155F3078D78ADD8CA8B20789CEC75 /* HYMemoryCache.h in Headers */,
+				82577A315ECBFA31BDF1EE3E6C178097 /* sqlite3.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E8472F32530EB412321587C296B79D52 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				244D82BE704FDE6D3B480D671D43BCA7 /* Pods-HYCache_Tests-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		0D69718956C49B15F300A15E0F1E3F8A /* Pods-HYCache_Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A951DC5882ECF248FC5F9EEEEA6CF5BF /* Build configuration list for PBXNativeTarget "Pods-HYCache_Tests" */;
+			buildPhases = (
+				3DCA0391FE4A265E2C8D568A50BFAF4C /* Sources */,
+				6EDA2BC4A50BCF1DA0DECF641F43319C /* Frameworks */,
+				E8472F32530EB412321587C296B79D52 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Pods-HYCache_Tests";
+			productName = "Pods-HYCache_Tests";
+			productReference = 42884574E7ABB46D931D78F33FC5BCFF /* Pods_HYCache_Tests.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		6F5B4E8657F79A46DD3D20CCE3943A03 /* HYCache */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 38AE06BB375382E6C3A722ED6B9B9DB9 /* Build configuration list for PBXNativeTarget "HYCache" */;
+			buildPhases = (
+				FCCCAC878A112521FA0BA0793EC7932C /* Sources */,
+				3361B2568AD9A2928158EB3EF5D13A8F /* Frameworks */,
+				B896192C64D1D2893018378A7A0C7352 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HYCache;
+			productName = HYCache;
+			productReference = 057246EF666B822F49D911FF0322C484 /* HYCache.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		E5B0439CDEE3FCEAC334B262F611C3F4 /* Pods-HYCache_Example */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4AC92D55A34B8ED8AE8FD327401D6736 /* Build configuration list for PBXNativeTarget "Pods-HYCache_Example" */;
+			buildPhases = (
+				BD9007EABCFDBC697262C686BC2EC9CF /* Sources */,
+				82793197CD29CB9849CFC153F075827D /* Frameworks */,
+				28A288DDD357F0926D7C7CFAA807D5E3 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A1CA18D2608BC73D189686EBAEEA4AFB /* PBXTargetDependency */,
+			);
+			name = "Pods-HYCache_Example";
+			productName = "Pods-HYCache_Example";
+			productReference = 0058F5149A5EB733CE5A55CC98939906 /* Pods_HYCache_Example.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D41D8CD98F00B204E9800998ECF8427E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0730;
+				LastUpgradeCheck = 0700;
+			};
+			buildConfigurationList = 2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 7DB346D0F39D3F0E887471402A8071AB;
+			productRefGroup = 6681CCE358981027F8C199979FC3C324 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6F5B4E8657F79A46DD3D20CCE3943A03 /* HYCache */,
+				E5B0439CDEE3FCEAC334B262F611C3F4 /* Pods-HYCache_Example */,
+				0D69718956C49B15F300A15E0F1E3F8A /* Pods-HYCache_Tests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3DCA0391FE4A265E2C8D568A50BFAF4C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0F79547F8A8531E8E172F53BD2F3A7EC /* Pods-HYCache_Tests-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BD9007EABCFDBC697262C686BC2EC9CF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ED20CBBEE7D12B5914B8CB275DD9D93A /* Pods-HYCache_Example-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FCCCAC878A112521FA0BA0793EC7932C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8C0C2AA5785FAF2C68BD7F5636249925 /* HYCache-dummy.m in Sources */,
+				D400F12E9C02152016AC5E8B185DEF33 /* HYCache.m in Sources */,
+				33C54D00709A338AF542FCFC5E8FC9FE /* HYDBRunnner.m in Sources */,
+				8FFEC0D22A166FA577FAA5D107D99DE9 /* HYDiskCache.m in Sources */,
+				4E0D63ED5251DF3D8BF408839DA521A8 /* HYDiskCacheItem.m in Sources */,
+				6981DFB773F3F10E965B24264CD2B055 /* HYMemoryCache.m in Sources */,
+				75F31EBFD40B44D05C1A94271C8A1012 /* sqlite3.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A1CA18D2608BC73D189686EBAEEA4AFB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = HYCache;
+			target = 6F5B4E8657F79A46DD3D20CCE3943A03 /* HYCache */;
+			targetProxy = BE0827EF9C8FD359C1D4EE9D392949B5 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0C30AC8798580A6C344124E728D20D25 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AB744A74495C20D056416D541C8CDBC2 /* Pods-HYCache_Tests.release.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Target Support Files/Pods-HYCache_Tests/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-HYCache_Tests/Pods-HYCache_Tests.modulemap";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = Pods_HYCache_Tests;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		8B83667352FF6E3D6F765D30C993AFAD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C8806710538B99F578A29019B1F80C69 /* Pods-HYCache_Example.release.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Target Support Files/Pods-HYCache_Example/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-HYCache_Example/Pods-HYCache_Example.modulemap";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = Pods_HYCache_Example;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		8DDD5BE65691476A65A45BB084350D5F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3DF5C0F47E44EA6321BB54E78740225E /* Pods-HYCache_Example.debug.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Target Support Files/Pods-HYCache_Example/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-HYCache_Example/Pods-HYCache_Example.modulemap";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = Pods_HYCache_Example;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		8DED8AD26D381A6ACFF202E5217EC498 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_RELEASE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				PROVISIONING_PROFILE_SPECIFIER = NO_SIGNING/;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SYMROOT = "${SRCROOT}/../build";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		90D4CB29F1BB601BFD58B1485152EF2F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 34161E5CE2625FCCC7300900B78C809F /* HYCache.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/HYCache/HYCache-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/HYCache/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/HYCache/HYCache.modulemap";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = HYCache;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		9E1E4E48AF2EAB23169E611BF694090A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_DEBUG=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				ONLY_ACTIVE_ARCH = YES;
+				PROVISIONING_PROFILE_SPECIFIER = NO_SIGNING/;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Debug;
+		};
+		ACBD0925DD82AA763E4FECB4631B0901 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 34161E5CE2625FCCC7300900B78C809F /* HYCache.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/HYCache/HYCache-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/HYCache/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/HYCache/HYCache.modulemap";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = HYCache;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		F8C66DAA043A98F811B6A1AE6908C805 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 217541153E2CFCFCDDF21E0A50E2155D /* Pods-HYCache_Tests.debug.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Target Support Files/Pods-HYCache_Tests/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-HYCache_Tests/Pods-HYCache_Tests.modulemap";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = Pods_HYCache_Tests;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9E1E4E48AF2EAB23169E611BF694090A /* Debug */,
+				8DED8AD26D381A6ACFF202E5217EC498 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		38AE06BB375382E6C3A722ED6B9B9DB9 /* Build configuration list for PBXNativeTarget "HYCache" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				90D4CB29F1BB601BFD58B1485152EF2F /* Debug */,
+				ACBD0925DD82AA763E4FECB4631B0901 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4AC92D55A34B8ED8AE8FD327401D6736 /* Build configuration list for PBXNativeTarget "Pods-HYCache_Example" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8DDD5BE65691476A65A45BB084350D5F /* Debug */,
+				8B83667352FF6E3D6F765D30C993AFAD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A951DC5882ECF248FC5F9EEEEA6CF5BF /* Build configuration list for PBXNativeTarget "Pods-HYCache_Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F8C66DAA043A98F811B6A1AE6908C805 /* Debug */,
+				0C30AC8798580A6C344124E728D20D25 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+}
