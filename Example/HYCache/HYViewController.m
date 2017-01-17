@@ -35,12 +35,14 @@
     
     
     if ([runner open]) {
-        for (NSInteger index = 0; index < 1000; ++index) {
+        for (NSInteger index = 0; index < 10000; ++index) {
             [runner saveWithKey:[@(index) stringValue] value:[[@(index) stringValue] dataUsingEncoding:NSUTF8StringEncoding] fileName:[@(index + 1000000) stringValue]];
+            
+            NSInteger count = [runner getTotalItemCount];
+            NSLog(@"%ld", count);
         }
     }
-    NSInteger count = [runner getTotalItemCount];
-    NSLog(@"%ld", count);
+    
     [runner removeItemWithKey:[@200 stringValue]];
     [runner removeItemWithKey:[@100 stringValue]];
     [runner removeItemWithKey:[@300 stringValue]];

@@ -14,6 +14,9 @@ static const NSTimeInterval kMinRetryTimeInterval = 2.0;
 static const int kPathLengthMax = PATH_MAX - 64;
 static NSString *const kDBName = @"meta.sqlite";
 
+//开启mmap 大小控制在5M
+#define kSQLiteMMapSize (50*1024*1024)
+
 // query result callback
 typedef NSInteger(^HYDBRunnerExecuteStatementsCallbackBlock)(NSDictionary *resultsDictionary);
 
@@ -91,8 +94,14 @@ NSInteger _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
     if (_db){
         return YES;
     }
-    sqlite3_config(SQLITE_CONFIG_MEMSTATUS, 0);
     
+    //关闭内存申请统计
+    sqlite3_config(SQLITE_CONFIG_MEMSTATUS, 0);
+    //尝试打开mmap
+    sqlite3_config(SQLITE_CONFIG_MMAP_SIZE, (SInt64)kSQLiteMMapSize, (SInt64)-1);
+    //多个线程可以共享connection 但是同时只能一个线程访问 关掉串行锁
+    sqlite3_config(SQLITE_CONFIG_MULTITHREAD);
+    int a = sqlite3_threadsafe();
     NSInteger result = sqlite3_open(_dbPath.UTF8String, &_db);
     if (result == SQLITE_OK) {
         CFDictionaryKeyCallBacks keyCallbacks = kCFCopyStringDictionaryKeyCallBacks;
@@ -332,7 +341,7 @@ NSInteger _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
 
 // create table and index
 - (BOOL)_dbInitialize {
-    NSString *sql = @"pragma journal_mode = wal; pragma synchronous = normal; create table if not exists manifest (key text, filename text, size integer, value blob, modification_time integer, last_access_time integer, primary key(key)); create index if not exists last_access_time_idx on manifest(last_access_time);";
+    NSString *sql = @"pragma journal_mode = wal; create table if not exists manifest (key text, filename text, size integer, value blob, modification_time integer, last_access_time integer, primary key(key)); create index if not exists last_access_time_idx on manifest(last_access_time);";
     return [self _executeStatements:sql];
 }
 
