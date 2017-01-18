@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		0ACD999D1EFECCE2B7CEA62A36DC9D21 /* Pods-HYCache_Example-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 32429CF1C1DD2A4DBE5ECEE2969C7DAF /* Pods-HYCache_Example-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0F79547F8A8531E8E172F53BD2F3A7EC /* Pods-HYCache_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = D2705B2AB3E73877A3E9468B071D3FAC /* Pods-HYCache_Tests-dummy.m */; };
+		1E8BD4141E2E2643007DA180 /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E8BD4121E2E2643007DA180 /* sqlite3.h */; };
+		1E8BD4151E2E2643007DA180 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E8BD4131E2E2643007DA180 /* sqlite3.c */; };
 		244D82BE704FDE6D3B480D671D43BCA7 /* Pods-HYCache_Tests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B2E5F4B25481C1109EC8D1390D7259B /* Pods-HYCache_Tests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		31B6948174EC497A864DC124D6D9F8CF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBB3DE36805AF21409EC968A9691732F /* Foundation.framework */; };
 		33C54D00709A338AF542FCFC5E8FC9FE /* HYDBRunnner.m in Sources */ = {isa = PBXBuildFile; fileRef = 52813005659B26BE50E13443697AA601 /* HYDBRunnner.m */; };
@@ -19,8 +21,6 @@
 		63982A2EFADB85335876192D99955983 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBB3DE36805AF21409EC968A9691732F /* Foundation.framework */; };
 		6981DFB773F3F10E965B24264CD2B055 /* HYMemoryCache.m in Sources */ = {isa = PBXBuildFile; fileRef = EFEF9CCFD29A49F771DFF5CF043DFFFE /* HYMemoryCache.m */; };
 		6BD1CA09373F20F0AE6A34767779E8A3 /* HYDiskCacheItem.h in Headers */ = {isa = PBXBuildFile; fileRef = BB8A08A488426114E02A22D012BB7E0A /* HYDiskCacheItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		75F31EBFD40B44D05C1A94271C8A1012 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = E399109F9EFBA44B71899F45E31B2F13 /* sqlite3.c */; };
-		82577A315ECBFA31BDF1EE3E6C178097 /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = 20840FA0C78C0B29891E2284435C1ADE /* sqlite3.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8C0C2AA5785FAF2C68BD7F5636249925 /* HYCache-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = A228350C5E5BF1DC7E33C3A710BF7FEB /* HYCache-dummy.m */; };
 		8FFEC0D22A166FA577FAA5D107D99DE9 /* HYDiskCache.m in Sources */ = {isa = PBXBuildFile; fileRef = A3EE4C022277307F2AA4E319C27BBA2B /* HYDiskCache.m */; };
 		ADDCEBF1EF765934A1D1DBF431231BAD /* HYDBRunnner.h in Headers */ = {isa = PBXBuildFile; fileRef = 9696E89697862CD774E7F275C63DD997 /* HYDBRunnner.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -41,11 +41,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0058F5149A5EB733CE5A55CC98939906 /* Pods_HYCache_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_HYCache_Example.framework; path = "Pods-HYCache_Example.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0058F5149A5EB733CE5A55CC98939906 /* Pods_HYCache_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_HYCache_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0168E83F0CC7DC31A2AB03280493AF82 /* Pods-HYCache_Example-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-HYCache_Example-acknowledgements.plist"; sourceTree = "<group>"; };
-		057246EF666B822F49D911FF0322C484 /* HYCache.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = HYCache.framework; path = HYCache.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		057246EF666B822F49D911FF0322C484 /* HYCache.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = HYCache.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		05C492B1F7CC57EBC8EC662411F43BF5 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		20840FA0C78C0B29891E2284435C1ADE /* sqlite3.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = sqlite3.h; sourceTree = "<group>"; };
+		1E8BD4101E2E24B4007DA180 /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.2.sdk/usr/lib/libsqlite3.0.tbd; sourceTree = DEVELOPER_DIR; };
+		1E8BD4121E2E2643007DA180 /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite3.h; sourceTree = "<group>"; };
+		1E8BD4131E2E2643007DA180 /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sqlite3.c; sourceTree = "<group>"; };
 		217541153E2CFCFCDDF21E0A50E2155D /* Pods-HYCache_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-HYCache_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		21A1312AB61892E4917A1E06CDADA4FD /* HYMemoryCache.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = HYMemoryCache.h; sourceTree = "<group>"; };
 		32429CF1C1DD2A4DBE5ECEE2969C7DAF /* Pods-HYCache_Example-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-HYCache_Example-umbrella.h"; sourceTree = "<group>"; };
@@ -53,7 +55,7 @@
 		3DF5C0F47E44EA6321BB54E78740225E /* Pods-HYCache_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-HYCache_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		41288CEE8E9E886161372EA05F9DAF6D /* Pods-HYCache_Tests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-HYCache_Tests-acknowledgements.plist"; sourceTree = "<group>"; };
 		4144939A088708F1F99F0F30D56DDAFC /* Pods-HYCache_Example-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-HYCache_Example-resources.sh"; sourceTree = "<group>"; };
-		42884574E7ABB46D931D78F33FC5BCFF /* Pods_HYCache_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_HYCache_Tests.framework; path = "Pods-HYCache_Tests.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		42884574E7ABB46D931D78F33FC5BCFF /* Pods_HYCache_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_HYCache_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		52813005659B26BE50E13443697AA601 /* HYDBRunnner.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = HYDBRunnner.m; sourceTree = "<group>"; };
 		5A4E32D65F0E4CB51D59361B0AC13AC7 /* Pods-HYCache_Tests-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-HYCache_Tests-resources.sh"; sourceTree = "<group>"; };
 		5F235B66224C9A2C38A4EAD64F2BA402 /* HYCache-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "HYCache-prefix.pch"; sourceTree = "<group>"; };
@@ -62,10 +64,10 @@
 		6B698DA1EC49E106AE52E4F3E0B832F5 /* Pods-HYCache_Tests-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-HYCache_Tests-frameworks.sh"; sourceTree = "<group>"; };
 		6C4996FCEC9E061A0CB101042362BF1F /* HYCache.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = HYCache.m; sourceTree = "<group>"; };
 		6EFD5B953C1A950BFB4FC88E52F8DAEE /* Pods-HYCache_Example-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-HYCache_Example-frameworks.sh"; sourceTree = "<group>"; };
-		749D9FDA7DA143FEA76601577B41C974 /* Pods-HYCache_Example.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; path = "Pods-HYCache_Example.modulemap"; sourceTree = "<group>"; };
+		749D9FDA7DA143FEA76601577B41C974 /* Pods-HYCache_Example.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = "Pods-HYCache_Example.modulemap"; sourceTree = "<group>"; };
 		7AB96E80128450D552F2976C524262A7 /* HYCache-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "HYCache-umbrella.h"; sourceTree = "<group>"; };
-		83D545281FC5701ED472981FFF1EBF4E /* Pods-HYCache_Tests.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; path = "Pods-HYCache_Tests.modulemap"; sourceTree = "<group>"; };
-		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		83D545281FC5701ED472981FFF1EBF4E /* Pods-HYCache_Tests.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = "Pods-HYCache_Tests.modulemap"; sourceTree = "<group>"; };
+		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		9696E89697862CD774E7F275C63DD997 /* HYDBRunnner.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = HYDBRunnner.h; sourceTree = "<group>"; };
 		9AB4B912FDD25EBD489A5ED9F501FB0A /* HYCache.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = HYCache.h; sourceTree = "<group>"; };
 		9EE5D4B81BE349FE8DB6D4C1C46A4FE5 /* Pods-HYCache_Example-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-HYCache_Example-acknowledgements.markdown"; sourceTree = "<group>"; };
@@ -73,7 +75,7 @@
 		A3EE4C022277307F2AA4E319C27BBA2B /* HYDiskCache.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = HYDiskCache.m; sourceTree = "<group>"; };
 		AAD30CB5E92CC2D61B79F1D61CB5D495 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AB744A74495C20D056416D541C8CDBC2 /* Pods-HYCache_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-HYCache_Tests.release.xcconfig"; sourceTree = "<group>"; };
-		B0081748559CBEE6D1A160DFD868E7A8 /* HYCache.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; path = HYCache.modulemap; sourceTree = "<group>"; };
+		B0081748559CBEE6D1A160DFD868E7A8 /* HYCache.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = HYCache.modulemap; sourceTree = "<group>"; };
 		BB8A08A488426114E02A22D012BB7E0A /* HYDiskCacheItem.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = HYDiskCacheItem.h; sourceTree = "<group>"; };
 		C8806710538B99F578A29019B1F80C69 /* Pods-HYCache_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-HYCache_Example.release.xcconfig"; sourceTree = "<group>"; };
 		C9C6E4DDE6C5613BC5817D634148D050 /* Pods-HYCache_Example-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-HYCache_Example-dummy.m"; sourceTree = "<group>"; };
@@ -82,7 +84,6 @@
 		CBB3DE36805AF21409EC968A9691732F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		D2705B2AB3E73877A3E9468B071D3FAC /* Pods-HYCache_Tests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-HYCache_Tests-dummy.m"; sourceTree = "<group>"; };
 		DD54969B74FEF629B869F783CA23B52B /* Pods-HYCache_Tests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-HYCache_Tests-acknowledgements.markdown"; sourceTree = "<group>"; };
-		E399109F9EFBA44B71899F45E31B2F13 /* sqlite3.c */ = {isa = PBXFileReference; includeInIndex = 1; path = sqlite3.c; sourceTree = "<group>"; };
 		EFEF9CCFD29A49F771DFF5CF043DFFFE /* HYMemoryCache.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = HYMemoryCache.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -177,10 +178,9 @@
 				A3EE4C022277307F2AA4E319C27BBA2B /* HYDiskCache.m */,
 				BB8A08A488426114E02A22D012BB7E0A /* HYDiskCacheItem.h */,
 				65FBD8607829AE9E9C6BC2966005F8D1 /* HYDiskCacheItem.m */,
-				E399109F9EFBA44B71899F45E31B2F13 /* sqlite3.c */,
-				20840FA0C78C0B29891E2284435C1ADE /* sqlite3.h */,
+				1E8BD4121E2E2643007DA180 /* sqlite3.h */,
+				1E8BD4131E2E2643007DA180 /* sqlite3.c */,
 			);
-			name = HYDiskCache;
 			path = HYDiskCache;
 			sourceTree = "<group>";
 		};
@@ -192,7 +192,6 @@
 				44C1BD92DF7BB6319C2F52EE1C5C7F2D /* HYDiskCache */,
 				CA202612B6C3422626DFBCDEA66F8B73 /* HYMemoryCache */,
 			);
-			name = Classes;
 			path = Classes;
 			sourceTree = "<group>";
 		};
@@ -211,7 +210,6 @@
 			children = (
 				47AA20D96E36E355C63B5162D9A07479 /* Classes */,
 			);
-			name = HYCache;
 			path = HYCache;
 			sourceTree = "<group>";
 		};
@@ -251,6 +249,7 @@
 		BC3CA7F9E30CC8F7E2DD044DD34432FC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1E8BD4101E2E24B4007DA180 /* libsqlite3.0.tbd */,
 				7531C8F8DE19F1AA3C8A7AC97A91DC29 /* iOS */,
 			);
 			name = Frameworks;
@@ -262,7 +261,6 @@
 				21A1312AB61892E4917A1E06CDADA4FD /* HYMemoryCache.h */,
 				EFEF9CCFD29A49F771DFF5CF043DFFFE /* HYMemoryCache.m */,
 			);
-			name = HYMemoryCache;
 			path = HYMemoryCache;
 			sourceTree = "<group>";
 		};
@@ -291,12 +289,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				E28CA4F30CAD2E8F005641FE348E9A46 /* HYCache-umbrella.h in Headers */,
+				1E8BD4141E2E2643007DA180 /* sqlite3.h in Headers */,
 				60F2D68F2BF17D412FAA6E0851B49334 /* HYCache.h in Headers */,
 				ADDCEBF1EF765934A1D1DBF431231BAD /* HYDBRunnner.h in Headers */,
 				41457456F4D1AC3C0AB05FEB3D0E7897 /* HYDiskCache.h in Headers */,
 				6BD1CA09373F20F0AE6A34767779E8A3 /* HYDiskCacheItem.h in Headers */,
 				D57155F3078D78ADD8CA8B20789CEC75 /* HYMemoryCache.h in Headers */,
-				82577A315ECBFA31BDF1EE3E6C178097 /* sqlite3.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -417,8 +415,8 @@
 				33C54D00709A338AF542FCFC5E8FC9FE /* HYDBRunnner.m in Sources */,
 				8FFEC0D22A166FA577FAA5D107D99DE9 /* HYDiskCache.m in Sources */,
 				4E0D63ED5251DF3D8BF408839DA521A8 /* HYDiskCacheItem.m in Sources */,
+				1E8BD4151E2E2643007DA180 /* sqlite3.c in Sources */,
 				6981DFB773F3F10E965B24264CD2B055 /* HYMemoryCache.m in Sources */,
-				75F31EBFD40B44D05C1A94271C8A1012 /* sqlite3.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

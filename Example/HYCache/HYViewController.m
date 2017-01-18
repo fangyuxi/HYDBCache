@@ -9,8 +9,23 @@
 #import "HYViewController.h"
 #import "HYDBRunnner.h"
 
-@interface HYViewController ()
+dispatch_semaphore_t semaphoreLock;
 
+static inline void lock()
+{
+    dispatch_semaphore_wait(semaphoreLock, DISPATCH_TIME_FOREVER);
+}
+
+static inline void unLock()
+{
+    dispatch_semaphore_signal(semaphoreLock);
+}
+
+
+@interface HYViewController ()
+{
+    HYDBRunnner *runner;
+}
 @end
 
 @implementation HYViewController
@@ -18,6 +33,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    semaphoreLock = dispatch_semaphore_create(1);
+    
 	// Do any additional setup after loading the view, typically from a nib.
     NSLog(@"%ld", sizeof(int));
     NSLog(@"%ld", sizeof(long));
@@ -31,26 +49,34 @@
     
     NSString *path = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES).firstObject;
     path = [path stringByAppendingPathComponent:@"fangyuxi"];
-    HYDBRunnner *runner = [[HYDBRunnner alloc] initWithDBPath:path];
+    runner = [[HYDBRunnner alloc] initWithDBPath:path];
     
     
     if ([runner open]) {
         for (NSInteger index = 0; index < 10000; ++index) {
-            [runner saveWithKey:[@(index) stringValue] value:[[@(index) stringValue] dataUsingEncoding:NSUTF8StringEncoding] fileName:[@(index + 1000000) stringValue]];
-            
-            NSInteger count = [runner getTotalItemCount];
-            NSLog(@"%ld", count);
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+               
+                lock();
+                [runner saveWithKey:[@(index) stringValue] value:[[@(index) stringValue] dataUsingEncoding:NSUTF8StringEncoding] fileName:[@(index + 1000000) stringValue]];
+                unLock();
+                
+                NSLog(@"%ld", index);
+                lock();
+                [runner removeItemWithKey:[@(index) stringValue]];
+                unLock();
+                
+                lock();
+                NSInteger end = [runner getTotalItemCount];
+                NSLog(@"%ld", end);
+                unLock();
+            });
         }
     }
     
-    [runner removeItemWithKey:[@200 stringValue]];
-    [runner removeItemWithKey:[@100 stringValue]];
-    [runner removeItemWithKey:[@300 stringValue]];
-    [runner removeItemWithKey:[@2500 stringValue]];
-    [runner removeAllItems];
-    NSInteger end = [runner getTotalItemCount];
-    NSLog(@"%ld", end);
     
+    if ([runner close]) {
+        runner = nil;
+    }
 }
 
 - (void)didReceiveMemoryWarning

@@ -99,9 +99,9 @@ NSInteger _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
     sqlite3_config(SQLITE_CONFIG_MEMSTATUS, 0);
     //尝试打开mmap
     sqlite3_config(SQLITE_CONFIG_MMAP_SIZE, (SInt64)kSQLiteMMapSize, (SInt64)-1);
-    //多个线程可以共享connection 但是同时只能一个线程访问 关掉串行锁
-    sqlite3_config(SQLITE_CONFIG_MULTITHREAD);
-    int a = sqlite3_threadsafe();
+    //多个线程可以共享connection
+    sqlite3_config(SQLITE_CONFIG_SERIALIZED);
+  
     NSInteger result = sqlite3_open(_dbPath.UTF8String, &_db);
     if (result == SQLITE_OK) {
         CFDictionaryKeyCallBacks keyCallbacks = kCFCopyStringDictionaryKeyCallBacks;
