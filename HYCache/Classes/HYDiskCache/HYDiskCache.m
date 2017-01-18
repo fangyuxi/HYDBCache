@@ -8,7 +8,7 @@
 
 #import "HYDiskCache.h"
 #import <CommonCrypto/CommonCrypto.h>
-#import "HYDBRunnner.h"
+#import "HYDBStorage.h"
 \
 NSString *const KHYDiskCacheFileSystemSpaceFullNotification = @"KHYDiskCacheFileSystemStorageSpaceFull";
 NSString *const KHYDiskCacheWriteErrorNotification = @"KHYDiskCacheFileSystemStorageSpaceFull";

@@ -3,9 +3,10 @@
 #endif
 
 #import "HYCache.h"
-#import "HYDBRunnner.h"
+#import "HYDBStorage.h"
 #import "HYDiskCache.h"
 #import "HYDiskCacheItem.h"
+#import "HYFileStorage.h"
 #import "sqlite3.h"
 #import "HYMemoryCache.h"
 

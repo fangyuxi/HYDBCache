@@ -11,14 +11,16 @@
 
 NS_ASSUME_NONNULL_BEGIN
 /**
- 同sqlite3进行交互
+ 同sqlite3进行交互 一个实例可以被多个线程共享 但是不可以多个线程同时操作
  
  使用我们自己编译的sqlite3库，要比苹果自带的快，同时也可进行源码级的优化
+ 
+ 不支持后台操作，请在外部使用 'beginBackgroundTaskWithExpirationHandler:^{}'
  */
 
-@interface HYDBRunnner : NSObject
+@interface HYDBStorage : NSObject
 
-@property (nonatomic, assign) BOOL errorLogsEnabled;
+@property (nonatomic, assign) BOOL logsEnabled;
 
 #pragma mark - Initializer
 
@@ -34,24 +36,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)init UNAVAILABLE_ATTRIBUTE;
 // do not use
 + (instancetype)new UNAVAILABLE_ATTRIBUTE;
-
-
-#pragma mark open close db
-
-/**
- open DB
-
- @return result
- */
-- (BOOL)open;
-
-
-/**
- close DB
-
- @return result
- */
-- (BOOL)close;
 
 #pragma mark save item
 
@@ -125,6 +109,14 @@ NS_ASSUME_NONNULL_BEGIN
  @return count
  */
 - (NSInteger)getTotalItemCount;
+
+
+/**
+ 清空数据
+ 
+ 底层实现：删除数据库后重建数据库
+ */
+- (BOOL)reset;
 
 @end
 

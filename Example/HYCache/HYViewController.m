@@ -7,7 +7,7 @@
 //
 
 #import "HYViewController.h"
-#import "HYDBRunnner.h"
+#import "HYDBStorage.h"
 
 dispatch_semaphore_t semaphoreLock;
 
@@ -24,7 +24,7 @@ static inline void unLock()
 
 @interface HYViewController ()
 {
-    HYDBRunnner *runner;
+    HYDBStorage *runner;
 }
 @end
 
@@ -36,20 +36,9 @@ static inline void unLock()
     
     semaphoreLock = dispatch_semaphore_create(1);
     
-	// Do any additional setup after loading the view, typically from a nib.
-    NSLog(@"%ld", sizeof(int));
-    NSLog(@"%ld", sizeof(long));
-    NSLog(@"%ld", sizeof(long long));
-    NSLog(@"%ld", sizeof(float));
-    NSLog(@"%ld", sizeof(double));
-    NSLog(@"%ld", sizeof(char));
-    NSLog(@"%ld", sizeof(void *));
-    NSLog(@"%ld", sizeof(NSInteger));
-
-    
     NSString *path = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES).firstObject;
     path = [path stringByAppendingPathComponent:@"fangyuxi"];
-    runner = [[HYDBRunnner alloc] initWithDBPath:path];
+    runner = [[HYDBStorage alloc] initWithDBPath:path];
     
     
     if ([runner open]) {
@@ -60,14 +49,14 @@ static inline void unLock()
                 [runner saveWithKey:[@(index) stringValue] value:[[@(index) stringValue] dataUsingEncoding:NSUTF8StringEncoding] fileName:[@(index + 1000000) stringValue]];
                 unLock();
                 
-                NSLog(@"%ld", index);
+                NSLog(@"%ld", (long)index);
                 lock();
                 [runner removeItemWithKey:[@(index) stringValue]];
                 unLock();
                 
                 lock();
                 NSInteger end = [runner getTotalItemCount];
-                NSLog(@"%ld", end);
+                NSLog(@"%ld", (long)end);
                 unLock();
             });
         }
