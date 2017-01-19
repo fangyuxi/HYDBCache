@@ -14,11 +14,12 @@
 
 @interface HYDiskCacheItem : NSObject
 
-@property (nonatomic, strong) NSString *key;            ///< key
-@property (nonatomic, strong) NSData *value;            ///< value
-@property (nonatomic, strong) NSString *fileName;       ///< filename key.md5 by default
-@property (nonatomic) NSInteger size;                   ///< size
-@property (nonatomic) NSInteger inTimeStamp;            ///< inCache time stamp
-@property (nonatomic) NSInteger lastAccessTimeStamp;    ///< the lasted access time stamp
+@property (nonatomic, copy)   NSString  *key;                   ///< key
+@property (nonatomic, strong) NSData    *value;                 ///< value
+@property (nonatomic, copy)   NSString  *fileName;              ///< filename key.md5 by default
+@property (nonatomic, assign) NSInteger size;                   ///< size
+@property (nonatomic, assign) NSInteger inTimeStamp;            ///< inCache time stamp
+@property (nonatomic, assign) NSInteger lastAccessTimeStamp;    ///< the lasted access time stamp
+@property (nonatomic, assign) NSInteger maxAge;                 ///< max age
 
 @end

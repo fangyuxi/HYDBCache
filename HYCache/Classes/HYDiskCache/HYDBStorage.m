@@ -13,7 +13,7 @@ static const NSUInteger kMaxErrorRetryCount = 10;
 static const NSTimeInterval kMinRetryTimeInterval = 2.0;
 static const int kPathLengthMax = PATH_MAX - 64;
 
-static NSString *const kDBName = @"meta.sqlite";                ///<数据库主文件
+static NSString *const kDBName = @"manifest.sqlite";                ///<数据库主文件
 static NSString *const kDBShmFileName = @"manifest.sqlite-shm"; ///<开启wal模式后的缓存文件
 static NSString *const kDBWalFileName = @"manifest.sqlite-wal"; //<开启wal模式后的缓冲文件，可以选择手动标记checkpoint，本次实现选择自动checkpoint
 
@@ -65,6 +65,11 @@ NSInteger _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
     return execCallbackBlock(dictionary);
 }
 
+- (void)dealloc
+{
+    [self _close];
+}
+
 - (instancetype)init {
     @throw [NSException exceptionWithName:@"HYDBStorage error" reason:@"请使用指定初始化函数" userInfo:nil];
     return nil;
@@ -110,7 +115,7 @@ NSInteger _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
     //尝试打开mmap
     sqlite3_config(SQLITE_CONFIG_MMAP_SIZE, (SInt64)kSQLiteMMapSize, (SInt64)-1);
     //多个线程可以共享connection
-    sqlite3_config(SQLITE_CONFIG_SERIALIZED);
+    sqlite3_config(SQLITE_CONFIG_SINGLETHREAD);
   
     NSInteger result = sqlite3_open(_dbPath.UTF8String, &_db);
     if (result == SQLITE_OK) {
@@ -139,6 +144,9 @@ NSInteger _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
     }
 }
 
+//如果调用的是'sqlite3_close' 如果关闭过程中有未执行完毕的语句会返回 'SQLITE_BUSY'
+//如果调用的是'sqlite3_close_v2' 如果关闭过程中有未执行完毕的语句 那么数据库会持续
+//一直冻结状态，知道所有语句执行完毕。
 - (BOOL)_close {
     if (!_db) {
         return YES;
@@ -178,40 +186,6 @@ NSInteger _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
     return YES;
 }
 
-- (BOOL)_saveWithKey:(NSString *)key
-               value:(NSData *)value
-            fileName:(NSString *)fileName{
-    NSString *sql = @"insert or replace into manifest (key, filename, size, value, modification_time, last_access_time) values (?1, ?2, ?3, ?4, ?5, ?6);";
-    sqlite3_stmt *stmt = [self _prepareStmt:sql];
-    if (!stmt) {
-        return NO;
-    }
-    NSInteger timestamp = (NSInteger)time(NULL);
-    sqlite3_bind_text(stmt, 1, key.UTF8String, -1, NULL);
-    sqlite3_bind_text(stmt, 2, fileName.UTF8String, -1, NULL);
-    sqlite3_bind_int(stmt, 3, (NSInteger)value.length);
-    if (fileName.length == 0) {
-        sqlite3_bind_blob(stmt, 4, value.bytes, (int)value.length, 0);
-    } else {
-        sqlite3_bind_blob(stmt, 4, NULL, 0, 0);
-    }
-    sqlite3_bind_int(stmt, 5, timestamp);
-    sqlite3_bind_int(stmt, 6, timestamp);
-    
-    int result = sqlite3_step(stmt);
-    if (result != SQLITE_DONE) {
-        if (_logsEnabled){
-            NSLog(@"%s line:%d sqlite insert error (%d): %s",
-                  __FUNCTION__,
-                  __LINE__,
-                  result,
-                  sqlite3_errmsg(_db));
-        }
-        return NO;
-    }
-    return YES;
-}
-
 - (BOOL)_check {
     if (!_db) {
         if (_dbOpenErrorCount < kMaxErrorRetryCount &&
@@ -226,7 +200,7 @@ NSInteger _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
 
 // create table and index
 - (BOOL)_createTable {
-    NSString *sql = @"pragma journal_mode = wal; create table if not exists manifest (key text, filename text, size integer, value blob, modification_time integer, last_access_time integer, primary key(key)); create index if not exists last_access_time_idx on manifest(last_access_time);";
+    NSString *sql = @"pragma journal_mode = wal; create table if not exists manifest (key text, filename text, size integer, value blob, in_time integer, last_access_time integer, max_age integer, primary key(key)); create index if not exists last_access_time_idx on manifest(last_access_time);";
     return [self _executeStatements:sql];
 }
 
@@ -265,7 +239,7 @@ NSInteger _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
             if (_logsEnabled) NSLog(@"%s line:%d sqlite stmt prepare error (%d): %s", __FUNCTION__, __LINE__, result, sqlite3_errmsg(_db));
             return NULL;
         }
-        CFDictionarySetValue(_dbStmtCache, (__bridge const void *)(sql), stmt);
+        //CFDictionarySetValue(_dbStmtCache, (__bridge const void *)(sql), stmt);
     } else {
         sqlite3_reset(stmt);
     }
@@ -283,13 +257,136 @@ NSInteger _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
     return string;
 }
 
+- (BOOL)_updateAccessTimeWithKey:(NSString *)key {
+    NSString *sql = @"update manifest set last_access_time = ?1 where key = ?2;";
+    sqlite3_stmt *stmt = [self _prepareStmt:sql];
+    if (!stmt) return NO;
+    sqlite3_bind_int(stmt, 1, (NSInteger)time(NULL));
+    sqlite3_bind_text(stmt, 2, key.UTF8String, -1, NULL);
+    int result = sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    if (result != SQLITE_DONE) {
+        if (_logsEnabled) {
+            NSLog(@"%s line:%d sqlite update error (%d): %s",
+                  __FUNCTION__,
+                  __LINE__,
+                  result,
+                  sqlite3_errmsg(_db));
+        }
+        return NO;
+    }
+    return YES;
+}
 
-- (BOOL)saveItem:(HYDiskCacheItem *)item
+
+- (BOOL)saveItem:(HYDiskCacheItem *)item shouldStoreValueInDB:(BOOL)store
 {
     if (item && item.key && item.key.length > 0) {
-        return [self _saveWithKey:item.key value:item.value fileName:item.fileName];
+        return [self saveItemWithKey:item.key
+                               value:item.value
+                            fileName:item.fileName
+                              maxAge:item.maxAge
+                shouldStoreValueInDB:store];
     }
     return NO;
+}
+
+- (BOOL)saveItemWithKey:(NSString *)key
+                  value:(NSData *)value
+               fileName:(NSString *)fileName
+                 maxAge:(NSInteger)maxAge
+   shouldStoreValueInDB:(BOOL)store{
+    
+    if (!key || key.length == 0) {
+        return NO;
+    }
+    
+    NSString *sql = @"insert or replace into manifest (key, filename, size, value, in_time, last_access_time, max_age) values (?1, ?2, ?3, ?4, ?5, ?6, ?7);";
+    sqlite3_stmt *stmt = [self _prepareStmt:sql];
+    if (!stmt) {
+        return NO;
+    }
+    NSInteger timestamp = (NSInteger)time(NULL);
+    sqlite3_bind_text(stmt, 1, key.UTF8String, -1, NULL);
+    sqlite3_bind_text(stmt, 2, fileName.UTF8String, -1, NULL);
+    sqlite3_bind_int(stmt, 3, (NSInteger)value.length);
+    if (store) {
+        sqlite3_bind_blob(stmt, 4, value.bytes, (int)value.length, 0);
+    }
+    else {
+        sqlite3_bind_blob(stmt, 4, NULL, 0, 0);
+    }
+    sqlite3_bind_int(stmt, 5, timestamp);
+    sqlite3_bind_int(stmt, 6, timestamp);
+    sqlite3_bind_int(stmt, 7, maxAge);
+    int result = sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    if (result != SQLITE_DONE) {
+        if (_logsEnabled){
+            NSLog(@"%s line:%d sqlite insert error (%d): %s",
+                  __FUNCTION__,
+                  __LINE__,
+                  result,
+                  sqlite3_errmsg(_db));
+        }
+        return NO;
+    }
+    return YES;
+}
+
+- (HYDiskCacheItem *)getItemForKey:(NSString *)key
+{
+    if (!key || key.length == 0) {
+        return nil;
+    }
+    
+    NSString *sql = @"select key, filename, size, value, in_time, last_access_time ,max_age from manifest where key = ?1;";
+    sqlite3_stmt *stmt = [self _prepareStmt:sql];
+    if (!stmt) {
+        return nil;
+    }
+    sqlite3_bind_text(stmt, 1, key.UTF8String, -1, NULL);
+    
+    HYDiskCacheItem *item = nil;
+    int result = sqlite3_step(stmt);
+    
+    if (result == SQLITE_ROW) {
+        
+        item = [HYDiskCacheItem new];
+        char *theKey = (char *)sqlite3_column_text(stmt, 0);
+        char *filename = (char *)sqlite3_column_text(stmt, 1);
+        NSInteger size = sqlite3_column_int(stmt, 2);
+        NSInteger length = sqlite3_column_bytes(stmt, 3);
+        char *value = NULL;
+        (length > 0) ? (value = sqlite3_column_blob(stmt, 3)) : (value = NULL);
+        NSInteger in_time = sqlite3_column_int(stmt, 4);
+        NSInteger last_access_time = sqlite3_column_int(stmt, 5);
+        NSInteger max_age = sqlite3_column_int(stmt, 6);
+        
+        (key == NULL) ? (item.key = @"") : (item.key = [NSString stringWithUTF8String:theKey]);
+        (filename == NULL) ? (item.fileName = @"") : (item.fileName = [NSString stringWithUTF8String:filename]);
+        item.size = size;
+        (value == NULL) ? (item.value = nil) : (item.value = [NSData dataWithBytes:value length:length]);
+        item.inTimeStamp = in_time;
+        item.lastAccessTimeStamp = last_access_time;
+        item.maxAge = max_age;
+        
+        //更新访问时间
+        [self _updateAccessTimeWithKey:key];
+    }
+    else {
+        if (result != SQLITE_DONE) {
+            if (_logsEnabled) {
+                NSLog(@"%s line:%d sqlite query error (%d): %s",
+                      __FUNCTION__,
+                      __LINE__,
+                      result,
+                      sqlite3_errmsg(_db));
+            }
+        }
+    }
+    sqlite3_finalize(stmt);
+    return item;
 }
 
 - (BOOL)removeItem:(HYDiskCacheItem *)item

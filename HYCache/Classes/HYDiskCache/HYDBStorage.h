@@ -27,6 +27,8 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Designated initializer.
  
+ Usually, you do not need to use this class out
+ 
  @param path 数据库地址的路径(不包含文件名)，会自动创建中间文件夹
  @return runner实例
  */
@@ -45,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param item One Item
  @return is succeed
  */
-- (BOOL)saveItem:(HYDiskCacheItem *)item;
+- (BOOL)saveItem:(HYDiskCacheItem *)item shouldStoreValueInDB:(BOOL)store;
 
 /**
  save to db
@@ -55,9 +57,22 @@ NS_ASSUME_NONNULL_BEGIN
  @param fileName 'fileName'
  @return is succeed
  */
-- (BOOL)saveWithKey:(NSString *)key
+- (BOOL)saveItemWithKey:(NSString *)key
               value:(NSData *)value
-           fileName:(NSString *)fileName;
+           fileName:(NSString *)fileName
+             maxAge:(NSInteger)maxAge
+shouldStoreValueInDB:(BOOL)store;
+
+#pragma mark get item
+
+
+/**
+ 获取 item
+
+ @param key 'key'
+ @return 'item'
+ */
+- (HYDiskCacheItem *)getItemForKey:(NSString *)key;
 
 #pragma mark remove item
 

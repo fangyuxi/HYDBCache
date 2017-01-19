@@ -10,9 +10,4 @@
 
 @implementation HYDiskCacheItem
 
-- (NSInteger)size
-{
-    return self.value.length;
-}
-
 @end

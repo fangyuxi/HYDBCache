@@ -35,14 +35,18 @@ extern NSString *const KHYDiskCacheReadErrorNotification;
 extern NSString *const KHYDiskCacheErrorKeyCacheName;
 extern NSString *const KHYDiskCacheErrorKeyFileName;
 extern NSString *const KHYDiskCacheErrorKeyNSError;
-extern NSString *const KHYDiskCacheErrorKeyFreeSpace; //NSNumber  long long
+extern NSString *const KHYDiskCacheErrorKeyFreeSpace;
 
 @class HYDiskCache;
 
 typedef void (^HYDiskCacheBlock) (HYDiskCache *cache);
 typedef void (^HYDiskCacheObjectBlock) (HYDiskCache *cache, NSString *key, id __nullable object);
 
-@interface HYDiskCache : NSObject // all method & proterty thread-safe
+/**
+ all method & proterty thread-safe
+ */
+
+@interface HYDiskCache : NSObject
 
 - (instancetype)init UNAVAILABLE_ATTRIBUTE;
 + (instancetype)new UNAVAILABLE_ATTRIBUTE;
@@ -69,7 +73,7 @@ typedef void (^HYDiskCacheObjectBlock) (HYDiskCache *cache, NSString *key, id __
 /**
  *  移除时间间隔 cache会定期移除已经超过maxAge的对象
  */
-@property (nonatomic, assign) NSTimeInterval trimToMaxAgeInterval;
+@property (nonatomic, assign) NSInteger trimToMaxAgeInterval;
 
 /**
  *  对于没有遵循NSCoding协议的一类对象，可以在这个block中定义自己的archive逻辑
@@ -101,7 +105,7 @@ typedef void (^HYDiskCacheObjectBlock) (HYDiskCache *cache, NSString *key, id __
  */
 - (void)setObject:(id<NSCoding>)object
            forKey:(NSString *)key
-           maxAge:(NSTimeInterval)maxAge
+           maxAge:(NSInteger)maxAge
         withBlock:(__nullable HYDiskCacheObjectBlock)block;
 
 /**
@@ -122,7 +126,7 @@ typedef void (^HYDiskCacheObjectBlock) (HYDiskCache *cache, NSString *key, id __
  */
 - (void)setObject:(id<NSCoding>)object
            forKey:(NSString *)key
-              maxAge:(NSTimeInterval)maxAge;
+              maxAge:(NSInteger)maxAge;
 
 /**
  *  异步获取对象，该方法会立即返回，获取完毕之后block会在内部的concurrent queue中回调

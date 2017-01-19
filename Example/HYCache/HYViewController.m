@@ -8,23 +8,25 @@
 
 #import "HYViewController.h"
 #import "HYDBStorage.h"
+#import "HYDiskCacheItem.h"
+#import "HYDiskCache.h"
 
 dispatch_semaphore_t semaphoreLock;
 
-static inline void lock()
-{
-    dispatch_semaphore_wait(semaphoreLock, DISPATCH_TIME_FOREVER);
-}
-
-static inline void unLock()
-{
-    dispatch_semaphore_signal(semaphoreLock);
-}
+//static inline void lock()
+//{
+//    dispatch_semaphore_wait(semaphoreLock, DISPATCH_TIME_FOREVER);
+//}
+//
+//static inline void unLock()
+//{
+//    dispatch_semaphore_signal(semaphoreLock);
+//}
 
 
 @interface HYViewController ()
 {
-    HYDBStorage *runner;
+    HYDiskCache *cache;
 }
 @end
 
@@ -38,34 +40,57 @@ static inline void unLock()
     
     NSString *path = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES).firstObject;
     path = [path stringByAppendingPathComponent:@"fangyuxi"];
-    runner = [[HYDBStorage alloc] initWithDBPath:path];
+//    runner = [[HYDBStorage alloc] initWithDBPath:path];
+//    
+//    HYDiskCacheItem *item = [[HYDiskCacheItem alloc] init];
+//    item.key = @"1";
+//    item.value = [@"fangyuxi" dataUsingEncoding:NSUTF8StringEncoding];
+//    item.fileName = @"1";
+//    item.size = item.value.length;
+//    
+//    //[runner saveWithKey:[@(1) stringValue] value:[[@(1) stringValue] dataUsingEncoding:NSUTF8StringEncoding] fileName:[@(1) stringValue]];
+//    
+//    [runner saveItem:item shouldStoreValueInDB:YES];
+//    [runner getItemForKey:@"1"];
+
     
+    cache = [[HYDiskCache alloc] initWithName:@"cache" andDirectoryPath:path];
     
-    if ([runner open]) {
-        for (NSInteger index = 0; index < 10000; ++index) {
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-               
-                lock();
-                [runner saveWithKey:[@(index) stringValue] value:[[@(index) stringValue] dataUsingEncoding:NSUTF8StringEncoding] fileName:[@(index + 1000000) stringValue]];
-                unLock();
-                
-                NSLog(@"%ld", (long)index);
-                lock();
-                [runner removeItemWithKey:[@(index) stringValue]];
-                unLock();
-                
-                lock();
-                NSInteger end = [runner getTotalItemCount];
-                NSLog(@"%ld", (long)end);
-                unLock();
+    for (NSInteger index = 0; index < 10000; ++index) {
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            
+            [cache setObject:@(index) forKey:[@(index) stringValue]];
+            NSLog(@"%ld", index);
+            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                NSLog(@"read: %@", [cache objectForKey:[@(index) stringValue]]);
             });
-        }
+        });
     }
     
     
-    if ([runner close]) {
-        runner = nil;
-    }
+    
+    
+    
+//    for (NSInteger index = 0; index < 10000; ++index) {
+//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+//            
+//            lock();
+//            [runner saveWithKey:[@(index) stringValue] value:[[@(index) stringValue] dataUsingEncoding:NSUTF8StringEncoding] fileName:[@(index + 1000000) stringValue]];
+//            unLock();
+//            
+//            NSLog(@"%ld", (long)index);
+//            lock();
+//            [runner removeItemWithKey:[@(index) stringValue]];
+//            unLock();
+//            
+//            lock();
+//            NSInteger end = [runner getTotalItemCount];
+//            NSLog(@"%ld", (long)end);
+//            unLock();
+//        });
+//    }
 }
 
 - (void)didReceiveMemoryWarning
