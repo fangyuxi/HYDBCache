@@ -58,16 +58,15 @@ dispatch_semaphore_t semaphoreLock;
     
     for (NSInteger index = 0; index < 10000; ++index) {
         
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-            
-            [cache setObject:@(index) forKey:[@(index) stringValue]];
-            NSLog(@"%ld", index);
-            
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                NSLog(@"read: %@", [cache objectForKey:[@(index) stringValue]]);
-            });
-        });
+        [cache setObject:@(index) forKey:[@(index) stringValue]];
+        //NSLog(@"%ld", index);
+        //NSLog(@"read: %@", [cache objectForKey:[@(index) stringValue]]);
+        
+//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//            
+//        });
     }
+    cache = nil;
     
     
     
