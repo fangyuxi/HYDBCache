@@ -264,7 +264,7 @@ static int64_t _HYDiskSpaceFree()
 
 - (void)setObject:(id<NSCoding>)object
            forKey:(NSString *)key
-           maxAge:(NSTimeInterval)maxAge
+           maxAge:(NSInteger)maxAge
         withBlock:(__nullable HYDiskCacheObjectBlock)block
 {
     __weak HYDiskCache *weakSelf = self;
@@ -397,31 +397,14 @@ static int64_t _HYDiskSpaceFree()
     if(![key isKindOfClass:[NSString class]] || key.length == 0) return;
     
     lock();
-    //[_storage _removeValueForKey:key];
-    unLock();
-}
-
-- (void)removeObjectForKeys:(NSArray<NSString *> *)keys
-                  withBlock:(__nullable HYDiskCacheBlock)block
-{
-    __weak HYDiskCache *weakSelf = self;
-    dispatch_async(_dataQueue, ^{
-        
-        __strong HYDiskCache *stronglySelf = weakSelf;
-        [self removeObjectForKeys:keys];
-        if (block)
-        {
-            block(stronglySelf);
+    HYDiskCacheItem *item = [_db getItemForKey:key];
+    if (item) {
+        NSString *fileName = item.fileName;
+        if (fileName && fileName.length > 0) {
+            [_file fileDeleteWithName:fileName];
         }
-    });
-}
-
-- (void)removeObjectForKeys:(NSArray<NSString *> *)keys
-{
-    if(![keys isKindOfClass:[NSArray class]] || keys.count == 0) return;
-    
-    lock();
-    //[_storage _removeValueForKeys:keys];
+        [_db removeItem:item];
+    }
     unLock();
 }
 

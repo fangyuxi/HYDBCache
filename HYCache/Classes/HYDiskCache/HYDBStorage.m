@@ -232,14 +232,21 @@ NSInteger _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
     if (![self _check] || sql.length == 0) {
         return NULL;
     }
-    sqlite3_stmt *stmt = (sqlite3_stmt *)CFDictionaryGetValue(_dbStmtCache, (__bridge const void *)(sql));
+    sqlite3_stmt *stmt = nil;
+    if (self.cachedSQL) {
+        stmt = (sqlite3_stmt *)CFDictionaryGetValue(_dbStmtCache, (__bridge const void *)(sql));
+    }
     if (!stmt) {
         int result = sqlite3_prepare_v2(_db, sql.UTF8String, -1, &stmt, NULL);
         if (result != SQLITE_OK) {
-            if (_logsEnabled) NSLog(@"%s line:%d sqlite stmt prepare error (%d): %s", __FUNCTION__, __LINE__, result, sqlite3_errmsg(_db));
+            if (_logsEnabled) {
+                NSLog(@"%s line:%d sqlite stmt prepare error (%d): %s", __FUNCTION__, __LINE__, result, sqlite3_errmsg(_db));
+            }
             return NULL;
         }
-        //CFDictionarySetValue(_dbStmtCache, (__bridge const void *)(sql), stmt);
+        if (self.cachedSQL) {
+            CFDictionarySetValue(_dbStmtCache, (__bridge const void *)(sql), stmt);
+        }
     } else {
         sqlite3_reset(stmt);
     }
@@ -264,7 +271,9 @@ NSInteger _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
     sqlite3_bind_int(stmt, 1, (NSInteger)time(NULL));
     sqlite3_bind_text(stmt, 2, key.UTF8String, -1, NULL);
     int result = sqlite3_step(stmt);
-    sqlite3_finalize(stmt);
+    if (!self.cachedSQL) {
+        sqlite3_finalize(stmt);
+    }
     if (result != SQLITE_DONE) {
         if (_logsEnabled) {
             NSLog(@"%s line:%d sqlite update error (%d): %s",
@@ -320,7 +329,9 @@ NSInteger _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
     sqlite3_bind_int(stmt, 6, timestamp);
     sqlite3_bind_int(stmt, 7, maxAge);
     int result = sqlite3_step(stmt);
-    sqlite3_finalize(stmt);
+    if (!self.cachedSQL) {
+        sqlite3_finalize(stmt);
+    }
     if (result != SQLITE_DONE) {
         if (_logsEnabled){
             NSLog(@"%s line:%d sqlite insert error (%d): %s",
@@ -385,7 +396,9 @@ NSInteger _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
             }
         }
     }
-    sqlite3_finalize(stmt);
+    if (!self.cachedSQL) {
+        sqlite3_finalize(stmt);
+    }
     return item;
 }
 

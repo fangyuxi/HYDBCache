@@ -1,6 +1,6 @@
 //
 //  HYDiskCache.h
-//  <https://github.com/fangyuxi/HYCache>
+//  <https://github.com/fangyuxi/HYDBCache>
 //
 //  Created by fangyuxi on 16/4/5.
 //
@@ -8,14 +8,6 @@
 //  LICENSE file in the root directory of this source tree.
 
 #import <Foundation/Foundation.h>
-
-///benckMark
-
-// SmallValue 1000 key-value  value = NSNumber
-
-// Write 8909.52 ms
-// replace 6105.77 ms
-// remove 128.00 ms
 
 
 NS_ASSUME_NONNULL_BEGIN
@@ -161,15 +153,6 @@ typedef void (^HYDiskCacheObjectBlock) (HYDiskCache *cache, NSString *key, id __
  *  @param key 存储对象的键，不能为空
  */
 - (void)removeObjectForKey:(NSString *)key;
-
-/**
- *  异步移除一组对象，移除完毕之后block会在内部的concurrent queue中回调
- *
- *  @param key   存储对象的键，不能为空
- *  @param block 返回值 cache object
- */
-- (void)removeObjectForKeys:(NSArray<NSString *> *)keys
-                  withBlock:(__nullable HYDiskCacheBlock)block;
 
 /**
  *  异步移除所有对象，移除完毕之后block会在内部的concurrent queue中回调

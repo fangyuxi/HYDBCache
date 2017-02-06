@@ -22,7 +22,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign) BOOL logsEnabled;
 
-
 /**
  缓存SQL语句，如果为'YES'，会缓存SQL语句，降低CPU使用率，在合适的时候释放内存
  
