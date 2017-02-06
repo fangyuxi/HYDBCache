@@ -56,19 +56,21 @@ dispatch_semaphore_t semaphoreLock;
     
     cache = [[HYDiskCache alloc] initWithName:@"cache" andDirectoryPath:path];
     
-    for (NSInteger index = 0; index < 10000; ++index) {
+    for (NSInteger index = 0; index < 100; ++index) {
         
-        [cache setObject:@(index) forKey:[@(index) stringValue]];
-        //NSLog(@"%ld", index);
-        //NSLog(@"read: %@", [cache objectForKey:[@(index) stringValue]]);
+        [cache setObject:@(index) forKey:[@(index) stringValue] maxAge:10000 + index];
+        NSLog(@"%ld", (long)index);
+        NSLog(@"read: %@", [cache objectForKey:[@(index) stringValue]]);
         
-//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//            
-//        });
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            NSUInteger cost = [cache totalCostNow];
+            NSLog(@"cost  %ld", (unsigned long)cost);
+            NSLog(@"contains %d", [cache containsObjectForKey:@"50"]);
+        });
     }
-    cache = nil;
     
-    
+    [cache setTrimToMaxAgeInterval:10];
     
     
     

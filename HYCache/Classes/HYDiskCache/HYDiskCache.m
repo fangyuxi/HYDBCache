@@ -20,6 +20,8 @@ NSString *const KHYDiskCacheErrorKeyFileName = @"KHYDiskCacheErrorKeyFileName";
 NSString *const KHYDiskCacheErrorKeyNSError = @"KHYDiskCacheErrorKeyNSError";
 NSString *const KHYDiskCacheErrorKeyFreeSpace = @"KHYDiskCacheErrorKeyFreeSpace";
 
+NSInteger const KHYCacheItemMaxAge = -1;
+
 static NSString *const dataQueueNamePrefix = @"com.HYDiskCache.ConcurrentQueue.";
 
 static NSString *const dataPath = @"data";
@@ -148,8 +150,8 @@ static int64_t _HYDiskSpaceFree()
 
 @implementation HYDiskCache
 
-@synthesize byteCostLimit = _byteCostLimit;
-@synthesize totalByteCostNow = _totalByteCostNow;
+@synthesize costLimit = _costLimit;
+@synthesize totalCostNow = _totalCostNow;
 @synthesize trimToMaxAgeInterval = _trimToMaxAgeInterval;
 @synthesize customArchiveBlock = _customArchiveBlock;
 @synthesize customUnarchiveBlock = _customUnarchiveBlock;
@@ -188,9 +190,9 @@ static int64_t _HYDiskSpaceFree()
         _name = [name copy];
         _directoryPath = [directoryPath copy];
         
-        _byteCostLimit = ULONG_MAX;
-        _totalByteCostNow = 0;
-        _trimToMaxAgeInterval = 20.0f;
+        _costLimit = ULONG_MAX;
+        _totalCostNow = 0;
+        _trimToMaxAgeInterval = 40.0f;
         
         semaphoreLock = dispatch_semaphore_create(1);
         _dataQueue = dispatch_queue_create([dataQueueNamePrefix UTF8String], DISPATCH_QUEUE_CONCURRENT);
@@ -220,6 +222,8 @@ static int64_t _HYDiskSpaceFree()
             return nil;
         }
         unLock();
+        
+        [self _trimToAgeLimitRecursively];
         
         return self;
     }
@@ -259,7 +263,7 @@ static int64_t _HYDiskSpaceFree()
            forKey:(NSString *)key
         withBlock:(__nullable HYDiskCacheObjectBlock)block
 {
-    [self setObject:object forKey:key maxAge:DBL_MAX withBlock:block];
+    [self setObject:object forKey:key maxAge:KHYCacheItemMaxAge withBlock:block];
 }
 
 - (void)setObject:(id<NSCoding>)object
@@ -283,7 +287,7 @@ static int64_t _HYDiskSpaceFree()
 - (void)setObject:(id<NSCoding>)object
            forKey:(NSString *)key
 {
-    [self setObject:object forKey:key maxAge:-1]; //never
+    [self setObject:object forKey:key maxAge:KHYCacheItemMaxAge]; //never
 }
 
 - (void)setObject:(id<NSCoding>)object
@@ -353,7 +357,7 @@ static int64_t _HYDiskSpaceFree()
         unLock();
         return nil;
     }
-    if (item.maxAge != -1 && (NSInteger)time(NULL) - item.inTimeStamp > item.maxAge) {
+    if (item.maxAge != KHYCacheItemMaxAge && (NSInteger)time(NULL) - item.inTimeStamp > item.maxAge) {
         unLock();
         return nil;
     }
@@ -425,15 +429,21 @@ static int64_t _HYDiskSpaceFree()
 - (void)removeAllObject
 {
     lock();
-    //[_storage _removeAllValues];
+    [_db removeAllItems];
+    [_file fileMoveAllToTrash];
+    [_file removeAllTrashFileInBackground];
     unLock();
 }
 
-- (void)containsObjectForKey:(id)key
-                       block:(nullable HYDiskCacheObjectBlock)block
+- (BOOL)containsObjectForKey:(id)key
 {
-    if (!key) return ;
-    [self objectForKey:key withBlock:block];
+    if (!key) return NO;
+    
+    lock();
+    BOOL contained = [_db containsItemForKey:key];
+    unLock();
+    
+    return contained;
 }
 
 - (void)trimToCost:(NSUInteger)cost
@@ -470,72 +480,61 @@ static int64_t _HYDiskSpaceFree()
 
 - (void)trimToCostLimitWithBlock:(nullable HYDiskCacheBlock)block
 {
-    [self trimToCost:self.byteCostLimit block:block];
+    //[self trimToCost:self.byteCostLimit block:block];
 }
 
-- (void)p_trimToAgeLimitRecursively
+- (void)_trimToAgeLimitRecursively
 {
-//    lock();
-//    NSTimeInterval trimInterval = _trimToMaxAgeInterval;
-//    __block _HYDiskCacheItem *item = _storage->_lruMap->_tail;
-//    unLock();
-//    
-//    NSDate *distantFuture = [NSDate distantFuture];
-//    while (item)
-//    {
-//        lock();
-//        NSTimeInterval objectMaxAge = item->maxAge;
-//        unLock();
-//        
-//        NSTimeInterval objectAgeSinceNow = -[item->inCacheDate timeIntervalSinceNow];
-//        if (objectAgeSinceNow >= objectMaxAge && ![item->inCacheDate isEqualToDate:distantFuture])
-//        {
-//            lock();
-//            [_storage _removeValueForKey:item->key];
-//            item = _storage->_lruMap->_tail;
-//            unLock();
-//        }
-//        else
-//        {
-//            item = nil;
-//        }
-//    }
-//    
-//    dispatch_time_t interval = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(trimInterval * NSEC_PER_SEC));
-//    
-//    __weak HYDiskCache *weakSelf = self;
-//    dispatch_after(interval, _dataQueue, ^{
-//        
-//        HYDiskCache *stronglySelf = weakSelf;
-//        [stronglySelf p_trimToAgeLimitRecursively];
-//    });
+    lock();
+    NSTimeInterval trimInterval = _trimToMaxAgeInterval;
+    unLock();
+
+    lock();
+    NSArray *files = [_db removeOverdueByMaxAge];
+    unLock();
+    
+    lock();
+    if (files.count) {
+        [_file fileDeleteWithNames:files];
+    }
+    unLock();
+    
+    dispatch_time_t interval = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(trimInterval * NSEC_PER_SEC));
+    
+    __weak HYDiskCache *weakSelf = self;
+    dispatch_after(interval, _dataQueue, ^{
+        
+        HYDiskCache *stronglySelf = weakSelf;
+        [stronglySelf _trimToAgeLimitRecursively];
+    });
 }
 
 
 #pragma mark getter setter for thread-safe
 
-- (NSUInteger)totalByteCostNow
-{
-//    lock();
-//    NSUInteger cost = _storage->_lruMap->_totalByteCost;
-//    unLock();
-//    return cost;
-    return 0;
-}
-
-- (NSUInteger)byteCostLimit
+- (NSUInteger)totalCostNow
 {
     lock();
-    NSUInteger cost = _byteCostLimit;
+    NSUInteger cost = [_db getTotalItemSize];
     unLock();
-    
     return cost;
 }
 
-- (void)setByteCostLimit:(NSUInteger)byteCostLimit
+- (NSUInteger)costLimit
+{
+    
+    lock();
+    NSUInteger limit = _costLimit;
+    unLock();
+    
+    return limit;
+    
+}
+
+- (void)setCostLimit:(NSUInteger)byteCostLimit
 {
     lock();
-    _byteCostLimit = byteCostLimit;
+    _costLimit = byteCostLimit;
     unLock();
 }
 
@@ -545,7 +544,7 @@ static int64_t _HYDiskSpaceFree()
     _trimToMaxAgeInterval = trimToMaxAgeInterval;
     unLock();
     
-    [self p_trimToAgeLimitRecursively];
+    [self _trimToAgeLimitRecursively];
 }
 
 - (NSTimeInterval)trimToMaxAgeInterval

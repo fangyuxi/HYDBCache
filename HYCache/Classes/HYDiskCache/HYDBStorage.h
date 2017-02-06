@@ -108,6 +108,23 @@ shouldStoreValueInDB:(BOOL)store;
  */
 - (BOOL)removeAllItems;
 
+
+/**
+ 是否包含某个键值
+
+ @param key 'key'
+ @return is contained
+ */
+- (BOOL)containsItemForKey:(NSString *)key;
+
+
+/**
+ 删除超过最大期限的item
+
+ @return item.fileName
+ */
+- (NSArray *)removeOverdueByMaxAge;
+
 #pragma mark get cache info
 
 /**

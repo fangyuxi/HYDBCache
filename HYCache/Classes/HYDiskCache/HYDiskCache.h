@@ -29,6 +29,11 @@ extern NSString *const KHYDiskCacheErrorKeyFileName;
 extern NSString *const KHYDiskCacheErrorKeyNSError;
 extern NSString *const KHYDiskCacheErrorKeyFreeSpace;
 
+/**
+ *  MaxAge forever young
+ */
+extern NSInteger const KHYCacheItemMaxAge;
+
 @class HYDiskCache;
 
 typedef void (^HYDiskCacheBlock) (HYDiskCache *cache);
@@ -55,12 +60,12 @@ typedef void (^HYDiskCacheObjectBlock) (HYDiskCache *cache, NSString *key, id __
 /**
  *  当前的cost，当超过byteCostLimit的时候，移除策略为LRU
  */
-@property (nonatomic, assign, readonly) NSUInteger totalByteCostNow;
+@property (nonatomic, assign, readonly) NSUInteger totalCostNow;
 
 /**
  *  设置最大cost 默认 ULONG_MAX
  */
-@property (nonatomic, assign) NSUInteger byteCostLimit;
+@property (nonatomic, assign) NSUInteger costLimit;
 
 /**
  *  移除时间间隔 cache会定期移除已经超过maxAge的对象
@@ -93,7 +98,7 @@ typedef void (^HYDiskCacheObjectBlock) (HYDiskCache *cache, NSString *key, id __
  *  @param object 存储的对象，如果为空，则不会插入，block对象会回调
  *  @param key    存储对象的键，如果为空，则不会插入，block对象会回调
  *  @param block  存储结束的回调，在concurrent queue中执行
- *  @param maxAge 对象的生命周期
+ *  @param maxAge 对象的生命周期 默认 KHYCacheItemMaxAge
  */
 - (void)setObject:(id<NSCoding>)object
            forKey:(NSString *)key
@@ -118,7 +123,7 @@ typedef void (^HYDiskCacheObjectBlock) (HYDiskCache *cache, NSString *key, id __
  */
 - (void)setObject:(id<NSCoding>)object
            forKey:(NSString *)key
-              maxAge:(NSInteger)maxAge;
+           maxAge:(NSInteger)maxAge;
 
 /**
  *  异步获取对象，该方法会立即返回，获取完毕之后block会在内部的concurrent queue中回调
@@ -171,10 +176,9 @@ typedef void (^HYDiskCacheObjectBlock) (HYDiskCache *cache, NSString *key, id __
  *
  *  @param key 存储对象的键，不能为空
  *
- *  @return 如果有，那么block中的object对象不为空
+ *  @return 是否包含
  */
-- (void)containsObjectForKey:(id)key
-                       block:(nullable HYDiskCacheObjectBlock)block;
+- (BOOL)containsObjectForKey:(id)key;
 
 /**
  *  移除对象，直到totalCostNow <= cost

@@ -54,6 +54,15 @@
     return [[NSFileManager defaultManager] removeItemAtPath:path error:NULL];
 }
 
+- (BOOL)fileDeleteWithNames:(NSArray *)fileNames
+{
+    BOOL result = true;
+    for (NSString *name in fileNames) {
+        result = [self fileDeleteWithName:name];
+    }
+    return result;
+}
+
 - (BOOL)fileMoveAllToTrash
 {
     CFUUIDRef uuidRef = CFUUIDCreate(NULL);

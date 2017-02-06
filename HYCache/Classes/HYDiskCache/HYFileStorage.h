@@ -58,6 +58,15 @@
 
 
 /**
+ delete files
+
+ @param fileNames 'file names'
+ @return is succeed
+ */
+- (BOOL)fileDeleteWithNames:(NSArray *)fileNames;
+
+
+/**
  move all file to trash path
 
  @return 'is succeed'

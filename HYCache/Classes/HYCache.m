@@ -108,20 +108,20 @@
 
 - (void)containsObjectForKey:(NSString *)key withBlock:(void(^)(BOOL contained))block
 {
-    BOOL contained = [_memCache containsObjectForKey:key];
-    if (contained){
-        
-        block(YES);
-    }
-    [_diskCache containsObjectForKey:key block:^(HYDiskCache * _Nonnull cache, NSString * _Nonnull key, id  _Nullable object) {
-       
-        if (object) {
-            block(YES);
-        }
-        else{
-            block(NO);
-        }
-    }];
+//    BOOL contained = [_memCache containsObjectForKey:key];
+//    if (contained){
+//        
+//        block(YES);
+//    }
+//    [_diskCache containsObjectForKey:key block:^(HYDiskCache * _Nonnull cache, NSString * _Nonnull key, id  _Nullable object) {
+//       
+//        if (object) {
+//            block(YES);
+//        }
+//        else{
+//            block(NO);
+//        }
+//    }];
 }
 
 @end

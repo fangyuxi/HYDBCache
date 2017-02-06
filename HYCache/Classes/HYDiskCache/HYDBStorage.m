@@ -457,6 +457,85 @@ NSInteger _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
     return YES;
 }
 
+- (BOOL)containsItemForKey:(NSString *)key
+{
+    NSString *sql = @"select filename from manifest where key = ?1";
+    sqlite3_stmt *stmt = [self _prepareStmt:sql];
+    if (!stmt) {
+        return NO;
+    }
+    sqlite3_bind_text(stmt, 1, key.UTF8String, -1, NULL);
+    NSString *fileName = nil;
+    int result = sqlite3_step(stmt);
+    if (result == SQLITE_ROW) {
+        char *cStringFileName = (char *)sqlite3_column_text(stmt, 0);
+        (cStringFileName == NULL) ? (fileName = nil) : (fileName = [NSString stringWithUTF8String:cStringFileName]);
+    }
+    if (!self.cachedSQL) {
+        sqlite3_finalize(stmt);
+    }
+    return fileName == nil ? NO : YES;
+}
+
+- (NSArray *)removeOverdueByMaxAge
+{
+    NSMutableArray *fileNames = [NSMutableArray new];
+    NSString *sql = @"select filename from manifest where max_age <> -1 AND ((?1 - in_time) > max_age)";
+    sqlite3_stmt *stmt = [self _prepareStmt:sql];
+    if (!stmt) {
+        return NO;
+    }
+    NSInteger timestamp = (NSInteger)time(NULL);;
+    NSInteger result = 0;
+    sqlite3_bind_int(stmt, 1, timestamp);
+    do {
+        result = sqlite3_step(stmt);
+        if (result == SQLITE_ROW) {
+            char *cStringFileName = (char *)sqlite3_column_text(stmt, 0);
+            if (cStringFileName) {
+                NSString *fileName = [NSString stringWithCString:cStringFileName encoding:NSUTF8StringEncoding];
+                [fileNames addObject:fileName];
+            }
+        }
+        else if (result == SQLITE_DONE) {
+            break;
+        }
+        else {
+            if (_logsEnabled){
+                NSLog(@"%s line:%d sqlite query error (%d): %s", __FUNCTION__, __LINE__, result, sqlite3_errmsg(_db));
+            }
+            break;
+        }
+    } while (1);
+    if (!self.cachedSQL) {
+        sqlite3_finalize(stmt);
+    }
+    
+    if (fileNames.count) {
+        //删除
+        NSString *sqlDelete = @"delete from manifest where max_age <> -1 AND ((?1 - in_time) > max_age)";
+        sqlite3_stmt *stmtDelete = [self _prepareStmt:sqlDelete];
+        sqlite3_bind_int(stmtDelete, 1, timestamp);
+        result = sqlite3_step(stmtDelete);
+        if (result != SQLITE_DONE) {
+            [fileNames removeAllObjects];
+            if (_logsEnabled) {
+                NSLog(@"%s line:%d db delete error (%d): %s",
+                      __FUNCTION__,
+                      __LINE__,
+                      result,
+                      sqlite3_errmsg(_db));
+            }
+            return fileNames;
+        }
+        if (!self.cachedSQL) {
+            sqlite3_finalize(stmtDelete);
+        }
+    }
+    
+    return fileNames;
+}
+
 
 - (NSInteger)getItemCountWithKey:(NSString *)key {
     NSString *sql = @"select count(key) from manifest where key = ?1;";
