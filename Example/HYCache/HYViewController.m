@@ -55,23 +55,23 @@ dispatch_semaphore_t semaphoreLock;
 
     
     cache = [[HYDiskCache alloc] initWithName:@"cache" andDirectoryPath:path];
-    NSLog(@"%ld",(unsigned long)cache.totalCostNow);
-    [cache trimToCost:10000 block:^(HYDiskCache * _Nonnull cache) {
+    //NSLog(@"%ld",(unsigned long)cache.totalCostNow);
+    //[cache trimToCost:10000 block:^(HYDiskCache * _Nonnull cache) {
         
-    }];
-//    for (NSInteger index = 0; index < 100; ++index) {
-//        
-//        [cache setObject:@(index) forKey:[@(index) stringValue] maxAge:10000 + index];
-//        NSLog(@"%ld", (long)index);
-//        NSLog(@"read: %@", [cache objectForKey:[@(index) stringValue]]);
-//        
-//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//            
-//            NSUInteger cost = [cache totalCostNow];
-//            NSLog(@"cost  %ld", (unsigned long)cost);
-//            NSLog(@"contains %d", [cache containsObjectForKey:@"50"]);
-//        });
-//    }
+    //}];
+    for (NSInteger index = 0; index < 10000; ++index) {
+        
+        [cache setObject:@(index) forKey:[@(index) stringValue] maxAge:10000 + index];
+        NSLog(@"%ld", (long)index);
+        NSLog(@"read: %@", [cache objectForKey:[@(index) stringValue]]);
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            NSUInteger cost = [cache totalCostNow];
+            NSLog(@"cost  %ld", (unsigned long)cost);
+            NSLog(@"contains %d", [cache containsObjectForKey:@"50"]);
+        });
+    }
     
     //[cache setTrimToMaxAgeInterval:10];
 //    [cache trimToCost:100 block:^(HYDiskCache * _Nonnull cache) {

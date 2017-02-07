@@ -21,6 +21,9 @@ NSString *const KHYDiskCacheErrorKeyNSError = @"KHYDiskCacheErrorKeyNSError";
 NSString *const KHYDiskCacheErrorKeyFreeSpace = @"KHYDiskCacheErrorKeyFreeSpace";
 
 NSInteger const KHYCacheItemMaxAge = -1;
+//当缓存文件大于16k的时候，将文件写入文件系统，不存入数据库，和NSURLCache一样
+//sqlite3的数据写入要比写入文件快，但是读取的时候，大于16k的时候就开始慢于文件系统了
+NSInteger const KHYCacheDBStorageThresholdSize  = 2014 * 16;
 
 static NSString *const dataQueueNamePrefix = @"com.HYDiskCache.ConcurrentQueue.";
 
@@ -312,15 +315,19 @@ static int64_t _HYDiskSpaceFree()
         data = [NSKeyedArchiver archivedDataWithRootObject:object];
     
     lock();
+    //小于20k的数据只存数据库，大于20k的文件只存文件
+    BOOL dbStorageOnly = data.length > KHYCacheDBStorageThresholdSize ? NO : YES;
     NSString *fileName = HYMD5(key);
     BOOL finishDB = [_db saveItemWithKey:key
                    value:data
                 fileName:fileName
                   maxAge:maxAge
-    shouldStoreValueInDB:NO];
-    BOOL finishWrite = [_file writeData:data fileName:fileName];
-    if (!finishWrite) {
-        [_db removeItemWithKey:key];
+    shouldStoreValueInDB:dbStorageOnly];
+    if (!dbStorageOnly) {
+        BOOL finishWrite = [_file writeData:data fileName:fileName];
+        if (!finishWrite) {
+            [_db removeItemWithKey:key];
+        }
     }
     unLock();
     
@@ -361,7 +368,7 @@ static int64_t _HYDiskSpaceFree()
         unLock();
         return nil;
     }
-    data = [_file fileReadWithName:item.fileName];
+    item.value.length > 0 ? (data = item.value) : (data = [_file fileReadWithName:item.fileName]);
     unLock();
     
     id object;
@@ -449,9 +456,11 @@ static int64_t _HYDiskSpaceFree()
 - (void)trimToCost:(NSUInteger)cost
              block:(nullable HYDiskCacheBlock)block;
 {
-    if (cost == 0)
-    {
+    if (cost == 0) {
         [self removeAllObjectWithBlock:block];
+        return;
+    }
+    if (cost > self.totalCostNow) {
         return;
     }
     
