@@ -121,19 +121,28 @@ shouldStoreValueInDB:(BOOL)store;
 /**
  删除超过最大期限的item
 
- @return item.fileName
+ @return items.fileName
  */
 - (NSArray *)removeOverdueByMaxAge;
 
 #pragma mark get cache info
 
-/**
- 返回指定key对应的条数，原则上只有一条或者没有
 
- @param key key
- @return count
+/**
+ 根据LRU算法，删除items
+
+ @param count 'delete count'
+ @return items.fileName
  */
-- (NSInteger)getItemCountWithKey:(NSString *)key;
+- (NSArray *)removeItemsByLRUWithCount:(NSUInteger)count;
+
+///**
+// 返回指定key对应的条数，原则上只有一条或者没有
+//
+// @param key key
+// @return count
+// */
+//- (NSInteger)getItemCountWithKey:(NSString *)key;
 
 /**
  返回目前缓存的总大小

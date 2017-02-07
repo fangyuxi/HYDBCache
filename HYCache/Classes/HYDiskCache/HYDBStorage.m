@@ -228,6 +228,28 @@ NSInteger _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
     return (rc == SQLITE_OK);
 }
 
+// ?1,?2,?3 ....
+- (NSString *)_joinedKeys:(NSArray *)keys {
+    NSMutableString *string = [NSMutableString new];
+    for (NSUInteger i = 0,max = keys.count; i < max; i++) {
+        [string appendString:@"?"];
+        if (i + 1 != max) {
+            [string appendString:@","];
+        }
+    }
+    return string;
+}
+
+// ?1,?2,?3 .... bind to sqlite3
+- (void)_bindJoinedKeys:(NSArray *)keys
+                   stmt:(sqlite3_stmt *)stmt
+              fromIndex:(int)index{
+    for (int i = 0, max = (int)keys.count; i < max; i++) {
+        NSString *key = keys[i];
+        sqlite3_bind_text(stmt, index + i, key.UTF8String, -1, NULL);
+    }
+}
+
 - (sqlite3_stmt *)_prepareStmt:(NSString *)sql {
     if (![self _check] || sql.length == 0) {
         return NULL;
@@ -536,27 +558,93 @@ NSInteger _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
     return fileNames;
 }
 
-
-- (NSInteger)getItemCountWithKey:(NSString *)key {
-    NSString *sql = @"select count(key) from manifest where key = ?1;";
+- (NSArray *)removeItemsByLRUWithCount:(NSUInteger)count
+{
+    NSMutableArray *fileNames = [NSMutableArray new];
+    NSMutableArray *keys = [NSMutableArray new];
+    NSString *sql = @"select key , filename from manifest order by last_access_time asc limit ?1";
     sqlite3_stmt *stmt = [self _prepareStmt:sql];
     if (!stmt) {
-        return -1;
+        return NO;
     }
-    sqlite3_bind_text(stmt, 1, key.UTF8String, -1, NULL);
-    NSInteger result = sqlite3_step(stmt);
-    if (result != SQLITE_ROW) {
-        if (_logsEnabled){
-            NSLog(@"%s line:%d sqlite query error (%d): %s",
-                  __FUNCTION__,
-                  __LINE__,
-                  result,
-                  sqlite3_errmsg(_db));
+    NSInteger result = 0;
+    sqlite3_bind_int(stmt, 1, count);
+    do {
+        result = sqlite3_step(stmt);
+        if (result == SQLITE_ROW) {
+            char *cStringKey = (char *)sqlite3_column_text(stmt, 0);
+            if (cStringKey) {
+                NSString *key = [NSString stringWithCString:cStringKey encoding:NSUTF8StringEncoding];
+                [keys addObject:key];
+            }
+            char *cStringFileName = (char *)sqlite3_column_text(stmt, 1);
+            if (cStringFileName) {
+                NSString *fileName = [NSString stringWithCString:cStringFileName encoding:NSUTF8StringEncoding];
+                [fileNames addObject:fileName];
+            }
         }
-        return -1;
+        else if (result == SQLITE_DONE) {
+            break;
+        }
+        else {
+            if (_logsEnabled){
+                NSLog(@"%s line:%d sqlite query error (%d): %s", __FUNCTION__, __LINE__, result, sqlite3_errmsg(_db));
+            }
+            break;
+        }
+    } while (1);
+    if (!self.cachedSQL) {
+        sqlite3_finalize(stmt);
     }
-    return sqlite3_column_int(stmt, 0);
+    //删除
+    if (keys.count) {
+        NSString *sql =  [NSString stringWithFormat:@"delete from manifest where key in (%@);", [self _joinedKeys:keys]];
+        sqlite3_stmt *stmt = [self _prepareStmt:sql];
+        if (!stmt) {
+            return NO;
+        }
+        [self _bindJoinedKeys:keys stmt:stmt fromIndex:1];
+        int result = sqlite3_step(stmt);
+        if (result != SQLITE_DONE) {
+            [fileNames removeAllObjects];
+            [keys removeAllObjects];
+            if (_logsEnabled) {
+                NSLog(@"%s line:%d db delete error (%d): %s",
+                      __FUNCTION__,
+                      __LINE__,
+                      result,
+                      sqlite3_errmsg(_db));
+            }
+            return fileNames;
+        }
+        if (!self.cachedSQL) {
+            sqlite3_finalize(stmt);
+        }
+    }
+    
+    return fileNames;
 }
+
+//- (NSInteger)getItemCountWithKey:(NSString *)key {
+//    NSString *sql = @"select count(key) from manifest where key = ?1;";
+//    sqlite3_stmt *stmt = [self _prepareStmt:sql];
+//    if (!stmt) {
+//        return -1;
+//    }
+//    sqlite3_bind_text(stmt, 1, key.UTF8String, -1, NULL);
+//    NSInteger result = sqlite3_step(stmt);
+//    if (result != SQLITE_ROW) {
+//        if (_logsEnabled){
+//            NSLog(@"%s line:%d sqlite query error (%d): %s",
+//                  __FUNCTION__,
+//                  __LINE__,
+//                  result,
+//                  sqlite3_errmsg(_db));
+//        }
+//        return -1;
+//    }
+//    return sqlite3_column_int(stmt, 0);
+//}
 
 - (NSInteger)getTotalItemSize {
     NSString *sql = @"select sum(size) from manifest;";

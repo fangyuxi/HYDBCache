@@ -449,38 +449,33 @@ static int64_t _HYDiskSpaceFree()
 - (void)trimToCost:(NSUInteger)cost
              block:(nullable HYDiskCacheBlock)block;
 {
-//    if (cost == 0)
-//    {
-//        [self removeAllObjectWithBlock:block];
-//    }
-//    else if (cost < self.totalByteCostNow)
-//    {
-//        __weak HYDiskCache *weakSelf = self;
-//        dispatch_async(_dataQueue, ^{
-//           
-//            __strong HYDiskCache *stronglySelf = weakSelf;
-//            lock();
-//            //do not use self.totalByteCostNow  avoid deadlock
-//            while (cost <= _storage->_lruMap->_totalByteCost)
-//            {
-//                _HYDiskCacheItem *item = _storage->_lruMap->_tail;
-//                if (item)
-//                {
-//                    [_storage _removeValueForKey:item->key];
-//                }
-//            }
-//            unLock();
-//            
-//            if (block)
-//                block(stronglySelf);
-//        });
-//    }
-//    return;
+    if (cost == 0)
+    {
+        [self removeAllObjectWithBlock:block];
+        return;
+    }
+    
+    NSUInteger count = [_db getTotalItemCount];
+    __weak HYDiskCache *weakSelf = self;
+    dispatch_async(_dataQueue, ^{
+        
+        __strong HYDiskCache *stronglySelf = weakSelf;
+        do{
+            lock();
+            NSArray *fileNames = [_db removeItemsByLRUWithCount:count / 10];
+            [_file fileDeleteWithNames:fileNames];
+            unLock();
+        }
+        while (self.totalCostNow >= cost);
+        if (block){
+            block(stronglySelf);
+        }
+    });
 }
 
 - (void)trimToCostLimitWithBlock:(nullable HYDiskCacheBlock)block
 {
-    //[self trimToCost:self.byteCostLimit block:block];
+    [self trimToCost:self.costLimit block:block];
 }
 
 - (void)_trimToAgeLimitRecursively
