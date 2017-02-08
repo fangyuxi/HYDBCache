@@ -59,19 +59,31 @@ dispatch_semaphore_t semaphoreLock;
     //[cache trimToCost:10000 block:^(HYDiskCache * _Nonnull cache) {
         
     //}];
-    for (NSInteger index = 0; index < 10000; ++index) {
+    
+    
         
-        [cache setObject:@(index) forKey:[@(index) stringValue] maxAge:10000 + index];
-        NSLog(@"%ld", (long)index);
-        NSLog(@"read: %@", [cache objectForKey:[@(index) stringValue]]);
-        
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        for (NSInteger index = 0; index < 1000; ++index) {
             
-            NSUInteger cost = [cache totalCostNow];
-            NSLog(@"cost  %ld", (unsigned long)cost);
-            NSLog(@"contains %d", [cache containsObjectForKey:@"50"]);
-        });
-    }
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            
+                [cache setObject:@(index) forKey:[@(index) stringValue] maxAge:10000 + index];
+                NSLog(@"%ld", (long)index);
+                NSLog(@"read: %@", [cache objectForKey:[@(index) stringValue]]);
+            });
+            
+        }
+    
+        for (NSInteger index = 0; index < 1000; ++index) {
+            
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+                
+                [cache removeObjectForKey:[@(index) stringValue]];
+                NSLog(@"removed %ld", (long)index);
+            });
+            
+        }
+    
+    
     
     //[cache setTrimToMaxAgeInterval:10];
 //    [cache trimToCost:100 block:^(HYDiskCache * _Nonnull cache) {

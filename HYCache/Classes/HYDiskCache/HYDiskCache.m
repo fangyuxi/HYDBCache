@@ -207,24 +207,14 @@ static int64_t _HYDiskSpaceFree()
             return nil;
         }
         
-        //由于加了锁，所以不影响初始化后对cache的存储操作
-        lock();
-        dispatch_async(_dataQueue, ^{
-           
-            _db = [[HYDBStorage alloc] initWithDBPath:_cacheManifestPath];
-            _file = [[HYFileStorage alloc] initWithPath:_cacheDataPath trashPath:_cacheTrushPath];
-            unLock();
-        });
+        _db = [[HYDBStorage alloc] initWithDBPath:_cacheManifestPath];
+        _file = [[HYFileStorage alloc] initWithPath:_cacheDataPath trashPath:_cacheTrushPath];
         
-        lock();
         if (!_db || !_file) {
             _db = nil;
             _file = nil;
-            unLock();
-            
             return nil;
         }
-        unLock();
         
         [self _trimToAgeLimitRecursively];
         
@@ -314,22 +304,23 @@ static int64_t _HYDiskSpaceFree()
     else
         data = [NSKeyedArchiver archivedDataWithRootObject:object];
     
-    lock();
     //小于20k的数据只存数据库，大于20k的文件只存文件
     BOOL dbStorageOnly = data.length > KHYCacheDBStorageThresholdSize ? NO : YES;
+    lock();
     NSString *fileName = HYMD5(key);
     BOOL finishDB = [_db saveItemWithKey:key
                    value:data
                 fileName:fileName
                   maxAge:maxAge
     shouldStoreValueInDB:dbStorageOnly];
+    unLock();
+    
     if (!dbStorageOnly) {
         BOOL finishWrite = [_file writeData:data fileName:fileName];
         if (!finishWrite) {
             [_db removeItemWithKey:key];
         }
     }
-    unLock();
     
     [task _endTask];
 }
@@ -359,17 +350,16 @@ static int64_t _HYDiskSpaceFree()
     
     lock();
     HYDiskCacheItem *item = [_db getItemForKey:key];
+    unLock();
     
     if (!item) {
-        unLock();
         return nil;
     }
     if (item.maxAge != KHYCacheItemMaxAge && (NSInteger)time(NULL) - item.inTimeStamp > item.maxAge) {
-        unLock();
         return nil;
     }
+    
     item.value.length > 0 ? (data = item.value) : (data = [_file fileReadWithName:item.fileName]);
-    unLock();
     
     id object;
     if (self.customUnarchiveBlock){
@@ -383,7 +373,6 @@ static int64_t _HYDiskSpaceFree()
             [self removeObjectForKey:key];
             object = nil;
         }
-        
     }
     return object;
 }
@@ -409,14 +398,18 @@ static int64_t _HYDiskSpaceFree()
     
     lock();
     HYDiskCacheItem *item = [_db getItemForKey:key];
+    unLock();
+    
     if (item) {
         NSString *fileName = item.fileName;
         if (fileName && fileName.length > 0) {
             [_file fileDeleteWithName:fileName];
         }
+        lock();
         [_db removeItem:item];
+        unLock();
     }
-    unLock();
+    
 }
 
 - (void)removeAllObjectWithBlock:(__nullable HYDiskCacheBlock)block
@@ -437,9 +430,10 @@ static int64_t _HYDiskSpaceFree()
 {
     lock();
     [_db removeAllItems];
+    unLock();
+    
     [_file fileMoveAllToTrash];
     [_file removeAllTrashFileInBackground];
-    unLock();
 }
 
 - (BOOL)containsObjectForKey:(id)key
@@ -472,8 +466,10 @@ static int64_t _HYDiskSpaceFree()
         do{
             lock();
             NSArray *fileNames = [_db removeItemsByLRUWithCount:count / 10];
-            [_file fileDeleteWithNames:fileNames];
             unLock();
+            
+            [_file fileDeleteWithNames:fileNames];
+            
         }
         while (self.totalCostNow >= cost);
         if (block){
@@ -497,11 +493,9 @@ static int64_t _HYDiskSpaceFree()
     NSArray *files = [_db removeOverdueByMaxAge];
     unLock();
     
-    lock();
     if (files.count) {
         [_file fileDeleteWithNames:files];
     }
-    unLock();
     
     dispatch_time_t interval = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(trimInterval * NSEC_PER_SEC));
     
