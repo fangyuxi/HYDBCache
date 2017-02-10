@@ -12,15 +12,11 @@
 #import "HYFileStorage.h"
 
 NSString *const KHYDiskCacheFileSystemSpaceFullNotification = @"KHYDiskCacheFileSystemStorageSpaceFull";
-NSString *const KHYDiskCacheWriteErrorNotification = @"KHYDiskCacheFileSystemStorageSpaceFull";
-NSString *const KHYDiskCacheReadErrorNotification = @"KHYDiskCacheFileSystemStorageSpaceFull";
-
-NSString *const KHYDiskCacheErrorKeyCacheName = @"KHYDiskCacheErrorKeyCacheName";
-NSString *const KHYDiskCacheErrorKeyFileName = @"KHYDiskCacheErrorKeyFileName";
-NSString *const KHYDiskCacheErrorKeyNSError = @"KHYDiskCacheErrorKeyNSError";
 NSString *const KHYDiskCacheErrorKeyFreeSpace = @"KHYDiskCacheErrorKeyFreeSpace";
 
 NSInteger const KHYCacheItemMaxAge = -1;
+NSInteger const KHYCacheDiskSpaceAlarmSize = 20 *  1024;
+
 //当缓存文件大于16k的时候，将文件写入文件系统，不存入数据库，和NSURLCache一样
 //sqlite3的数据写入要比写入文件快，但是读取的时候，大于16k的时候就开始慢于文件系统了
 NSInteger const KHYCacheDBStorageThresholdSize  = 2014 * 16;
@@ -75,7 +71,7 @@ static int64_t _HYDiskSpaceFree()
     if (space < 0){
         space = -1;
     }
-    else if (space < 20 *  1024){
+    else if (space < KHYCacheDiskSpaceAlarmSize){
         dispatch_async(dispatch_get_main_queue(), ^{
             
             [[NSNotificationCenter defaultCenter] postNotificationName:KHYDiskCacheFileSystemSpaceFullNotification object:@{KHYDiskCacheErrorKeyFreeSpace:@(space)}];
@@ -199,6 +195,8 @@ static int64_t _HYDiskSpaceFree()
         
         semaphoreLock = dispatch_semaphore_create(1);
         _dataQueue = dispatch_queue_create([dataQueueNamePrefix UTF8String], DISPATCH_QUEUE_CONCURRENT);
+        
+        _HYDiskSpaceFree();
         
         //创建路径
         if (![self p_createPath])
@@ -378,7 +376,7 @@ static int64_t _HYDiskSpaceFree()
 }
 
 - (void)removeObjectForKey:(NSString *)key
-                 withBlock:(__nullable HYDiskCacheBlock)block
+                 withBlock:(HYDiskCacheBlock)block
 {
     __weak HYDiskCache *weakSelf = self;
     dispatch_async(_dataQueue, ^{
@@ -412,7 +410,7 @@ static int64_t _HYDiskSpaceFree()
     
 }
 
-- (void)removeAllObjectWithBlock:(__nullable HYDiskCacheBlock)block
+- (void)removeAllObjectWithBlock:(HYDiskCacheBlock)block
 {
     __weak HYDiskCache *weakSelf = self;
     dispatch_async(_dataQueue, ^{
@@ -448,7 +446,7 @@ static int64_t _HYDiskSpaceFree()
 }
 
 - (void)trimToCost:(NSUInteger)cost
-             block:(nullable HYDiskCacheBlock)block;
+             block:(HYDiskCacheBlock)block;
 {
     if (cost == 0) {
         [self removeAllObjectWithBlock:block];
@@ -478,7 +476,7 @@ static int64_t _HYDiskSpaceFree()
     });
 }
 
-- (void)trimToCostLimitWithBlock:(nullable HYDiskCacheBlock)block
+- (void)trimToCostLimitWithBlock:(HYDiskCacheBlock)block
 {
     [self trimToCost:self.costLimit block:block];
 }

@@ -17,16 +17,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 
 extern NSString *const KHYDiskCacheFileSystemStorageFullNotification;
-extern NSString *const KHYDiskCacheWriteErrorNotification;
-extern NSString *const KHYDiskCacheReadErrorNotification;
 
 /**
  *  Notifications Keys
  */
 
-extern NSString *const KHYDiskCacheErrorKeyCacheName;
-extern NSString *const KHYDiskCacheErrorKeyFileName;
-extern NSString *const KHYDiskCacheErrorKeyNSError;
 extern NSString *const KHYDiskCacheErrorKeyFreeSpace;
 
 /**
@@ -48,9 +43,9 @@ typedef void (^HYDiskCacheObjectBlock) (HYDiskCache *cache, NSString *key, id __
 - (instancetype)init UNAVAILABLE_ATTRIBUTE;
 + (instancetype)new UNAVAILABLE_ATTRIBUTE;
 
-- (instancetype)initWithName:(NSString *)name;
+- (instancetype __nullable)initWithName:(NSString *)name;
 
-- (instancetype)initWithName:(NSString *)name
+- (instancetype __nullable)initWithName:(NSString *)name
             andDirectoryPath:(NSString *)directoryPath NS_DESIGNATED_INITIALIZER;
 
 @property (nonatomic, copy, readonly) NSString *name;
@@ -68,26 +63,26 @@ typedef void (^HYDiskCacheObjectBlock) (HYDiskCache *cache, NSString *key, id __
 @property (nonatomic, assign) NSUInteger costLimit;
 
 /**
- *  移除时间间隔 cache会定期移除已经超过maxAge的对象
+ *  移除时间间隔 cache会定期移除已经超过maxAge的对象 默认40秒
  */
 @property (nonatomic, assign) NSInteger trimToMaxAgeInterval;
 
 /**
  *  对于没有遵循NSCoding协议的一类对象，可以在这个block中定义自己的archive逻辑
  */
-@property (nullable, copy) NSData *(^customArchiveBlock)(id object);
+@property (nonatomic, nullable, copy) NSData *(^customArchiveBlock)(id object);
 
-@property (nullable, copy) id (^customUnarchiveBlock)(NSData *data);
+@property (nonatomic, nullable, copy) id (^customUnarchiveBlock)(NSData *data);
 
 /**
  *  异步存储对象，该方法会立即返回，添加完毕之后block会在内部的concurrent queue中回调
-    block，有效期为最大
+    block，maxAge为最大
  *
- *  @param object 存储的对象，如果为空，则不会插入，block对象会回调
+ *  @param object 存储的对象，如果为空，则不会插入，block对象会回调，如果存在，会删除原有对象
  *  @param key    存储对象的键，如果为空，则不会插入，block对象会回调
  *  @param block  存储结束的回调，在concurrent queue中执行
  */
-- (void)setObject:(id<NSCoding>)object
+- (void)setObject:(id<NSCoding> __nullable)object
            forKey:(NSString *)key
         withBlock:(__nullable HYDiskCacheObjectBlock)block;
 
@@ -95,12 +90,12 @@ typedef void (^HYDiskCacheObjectBlock) (HYDiskCache *cache, NSString *key, id __
  *  异步存储对象，该方法会立即返回，添加完毕之后block会在内部的concurrent queue中回调
  block
  *
- *  @param object 存储的对象，如果为空，则不会插入，block对象会回调
+ *  @param object 存储的对象，如果为空，则不会插入，block对象会回调，如果存在，会删除原有对象
  *  @param key    存储对象的键，如果为空，则不会插入，block对象会回调
  *  @param block  存储结束的回调，在concurrent queue中执行
  *  @param maxAge 对象的生命周期 默认 KHYCacheItemMaxAge
  */
-- (void)setObject:(id<NSCoding>)object
+- (void)setObject:(id<NSCoding> __nullable)object
            forKey:(NSString *)key
            maxAge:(NSInteger)maxAge
         withBlock:(__nullable HYDiskCacheObjectBlock)block;
@@ -108,20 +103,20 @@ typedef void (^HYDiskCacheObjectBlock) (HYDiskCache *cache, NSString *key, id __
 /**
  *  同步存储对象，有效期为最大
  *
- *  @param object 存储的对象，如果为空，则不会插入
+ *  @param object 存储的对象，如果为空，则不会插入，如果存在，会删除原有对象
  *  @param key    存储对象的键，如果为空，则不会插入
  */
-- (void)setObject:(id<NSCoding>)object
+- (void)setObject:(id<NSCoding> __nullable)object
            forKey:(NSString *)key;
 
 /**
  *  @brief 同步存储对象
  *
- *  @param object 存储的对象，如果为空，则不会插入
+ *  @param object 存储的对象，如果为空，则不会插入，如果存在，会删除原有对象
  *  @param key    存储对象的键，如果为空，则不会插入
  *  @param maxAge 存储的最大时间
  */
-- (void)setObject:(id<NSCoding>)object
+- (void)setObject:(id<NSCoding> __nullable)object
            forKey:(NSString *)key
            maxAge:(NSInteger)maxAge;
 
@@ -150,7 +145,7 @@ typedef void (^HYDiskCacheObjectBlock) (HYDiskCache *cache, NSString *key, id __
  *  @param block 返回值 cache object
  */
 - (void)removeObjectForKey:(NSString *)key
-                 withBlock:(__nullable HYDiskCacheBlock)block;
+                 withBlock:(HYDiskCacheBlock)block;
 
 /**
  *  同步移除对象
@@ -164,7 +159,7 @@ typedef void (^HYDiskCacheObjectBlock) (HYDiskCache *cache, NSString *key, id __
  *
  *  @param block 返回值 cache object
  */
-- (void)removeAllObjectWithBlock:(__nullable HYDiskCacheBlock)block;
+- (void)removeAllObjectWithBlock:(HYDiskCacheBlock)block;
 
 /**
  *  同步移除所有对象
@@ -187,14 +182,14 @@ typedef void (^HYDiskCacheObjectBlock) (HYDiskCache *cache, NSString *key, id __
  *  @param block 移除完毕之后block会在内部的concurrent queue中回调
  */
 - (void)trimToCost:(NSUInteger)cost
-             block:(nullable HYDiskCacheBlock)block;
+             block:(HYDiskCacheBlock)block;
 
 /**
  *  移除对象，直到totalCostNow <= costLimit
  *
  *  @param block 移除完毕之后block会在内部的concurrent queue中回调
  */
-- (void)trimToCostLimitWithBlock:(nullable HYDiskCacheBlock)block;
+- (void)trimToCostLimitWithBlock:(HYDiskCacheBlock)block;
 
 @end
 

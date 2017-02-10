@@ -502,7 +502,7 @@ NSInteger _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
 - (NSArray *)removeOverdueByMaxAge
 {
     NSMutableArray *fileNames = [NSMutableArray new];
-    NSString *sql = @"select filename from manifest where max_age <> -1 AND ((?1 - in_time) > max_age)";
+    NSString *sql = @"select filename, value from manifest where max_age <> -1 AND ((?1 - in_time) > max_age)";
     sqlite3_stmt *stmt = [self _prepareStmt:sql];
     if (!stmt) {
         return NO;
@@ -513,10 +513,14 @@ NSInteger _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
     do {
         result = sqlite3_step(stmt);
         if (result == SQLITE_ROW) {
-            char *cStringFileName = (char *)sqlite3_column_text(stmt, 0);
-            if (cStringFileName) {
-                NSString *fileName = [NSString stringWithCString:cStringFileName encoding:NSUTF8StringEncoding];
-                [fileNames addObject:fileName];
+            //如果数据库已经存储了value，那么返回的结果中将不包含此filename
+            char *value = sqlite3_column_blob(stmt, 1);
+            if (!value) {
+                char *cStringFileName = (char *)sqlite3_column_text(stmt, 0);
+                if (cStringFileName) {
+                    NSString *fileName = [NSString stringWithCString:cStringFileName encoding:NSUTF8StringEncoding];
+                    [fileNames addObject:fileName];
+                }
             }
         }
         else if (result == SQLITE_DONE) {
@@ -562,7 +566,7 @@ NSInteger _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
 {
     NSMutableArray *fileNames = [NSMutableArray new];
     NSMutableArray *keys = [NSMutableArray new];
-    NSString *sql = @"select key , filename from manifest order by last_access_time asc limit ?1";
+    NSString *sql = @"select key, filename, value from manifest order by last_access_time asc limit ?1";
     sqlite3_stmt *stmt = [self _prepareStmt:sql];
     if (!stmt) {
         return NO;
@@ -572,15 +576,19 @@ NSInteger _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
     do {
         result = sqlite3_step(stmt);
         if (result == SQLITE_ROW) {
+            //如果数据库已经存储了value，那么返回的结果中将不包含此filename和key
+            char *value = sqlite3_column_blob(stmt, 2);
+            if (!value) {
+                char *cStringFileName = (char *)sqlite3_column_text(stmt, 1);
+                if (cStringFileName) {
+                    NSString *fileName = [NSString stringWithCString:cStringFileName encoding:NSUTF8StringEncoding];
+                    [fileNames addObject:fileName];
+                }
+            }
             char *cStringKey = (char *)sqlite3_column_text(stmt, 0);
             if (cStringKey) {
                 NSString *key = [NSString stringWithCString:cStringKey encoding:NSUTF8StringEncoding];
                 [keys addObject:key];
-            }
-            char *cStringFileName = (char *)sqlite3_column_text(stmt, 1);
-            if (cStringFileName) {
-                NSString *fileName = [NSString stringWithCString:cStringFileName encoding:NSUTF8StringEncoding];
-                [fileNames addObject:fileName];
             }
         }
         else if (result == SQLITE_DONE) {

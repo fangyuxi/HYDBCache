@@ -40,7 +40,7 @@ typedef void (^HYMemoryCacheObjectBlock) (HYMemoryCache *cache, NSString *key, i
 /**
  *  当前的cost
  */
-@property (nonatomic, assign, readonly) NSUInteger totalCostNow;
+@property (nonatomic, assign, readonly) NSUInteger costNow;
 /**
  *  设置最大cost
  */
@@ -69,9 +69,9 @@ typedef void (^HYMemoryCacheObjectBlock) (HYMemoryCache *cache, NSString *key, i
  *  @param key    存储对象的键，如果为空，则不会插入，block对象会回调
  *  @param block  存储结束的回调，在concurrent queue中执行
  */
-- (void)setObject:(id)object
+- (void)setObject:(id __nullable)object
            forKey:(id)key
-        withBlock:(__nullable HYMemoryCacheObjectBlock)block;
+        withBlock:(HYMemoryCacheObjectBlock)block;
 
 /**
  *  同步存储对象，该方法会阻塞调用的线程，直到存储完成
@@ -79,7 +79,7 @@ typedef void (^HYMemoryCacheObjectBlock) (HYMemoryCache *cache, NSString *key, i
  *  @param object 存储的对象，如果为空，则不会插入
  *  @param key    存储对象的键，如果为空，则不会插入
  */
-- (void)setObject:(id)object
+- (void)setObject:(id __nullable)object
            forKey:(id)key;
 
 /**
@@ -91,16 +91,16 @@ typedef void (^HYMemoryCacheObjectBlock) (HYMemoryCache *cache, NSString *key, i
  *  @param cost   cost为插入对象的大小，赋值有助于更准确的淘汰对象
  *  @param block  存储结束的回调，在concurrent queue中执行
  */
-- (void)setObject:(id)object
+- (void)setObject:(id __nullable)object
            forKey:(id)key
          withCost:(NSUInteger)cost
-        withBlock:(__nullable HYMemoryCacheObjectBlock)block;
+        withBlock:(HYMemoryCacheObjectBlock)block;
 
-- (void)setObject:(id)object
+- (void)setObject:(id __nullable)object
            forKey:(id)key
          withCost:(NSUInteger)cost
            maxAge:(NSTimeInterval)maxAge
-        withBlock:(__nullable HYMemoryCacheObjectBlock)block;
+        withBlock:(HYMemoryCacheObjectBlock)block;
 
 /**
  *  同步存储对象，该方法会阻塞调用的线程，直到存储完成
@@ -110,11 +110,11 @@ typedef void (^HYMemoryCacheObjectBlock) (HYMemoryCache *cache, NSString *key, i
  *  @param key    存储对象的键，如果为空，则不会插入，block对象会回调
  *  @param cost   cost为插入对象的大小，赋值有助于更准确的淘汰对象
  */
-- (void)setObject:(id)object
+- (void)setObject:(id __nullable)object
            forKey:(id)key
          withCost:(NSUInteger)cost;
 
-- (void)setObject:(id)object
+- (void)setObject:(id __nullable)object
            forKey:(id)key
            maxAge:(NSTimeInterval)maxAge
          withCost:(NSUInteger)cost;
@@ -143,7 +143,7 @@ typedef void (^HYMemoryCacheObjectBlock) (HYMemoryCache *cache, NSString *key, i
  *  @param block 返回值 key object(已经被移除的对象) cache object
  */
 - (void)removeObjectForKey:(id)key
-                 withBlock:(__nullable HYMemoryCacheObjectBlock)block;
+                 withBlock:(HYMemoryCacheObjectBlock)block;
 
 /**
  *  同步移除对象
@@ -157,7 +157,7 @@ typedef void (^HYMemoryCacheObjectBlock) (HYMemoryCache *cache, NSString *key, i
  *
  *  @param block 返回值 cache object
  */
-- (void)removeAllObjectWithBlock:(__nullable HYMemoryCacheBlock)block;
+- (void)removeAllObjectWithBlock:(HYMemoryCacheBlock)block;
 
 /**
  *  同步移除所有对象
@@ -179,14 +179,14 @@ typedef void (^HYMemoryCacheObjectBlock) (HYMemoryCache *cache, NSString *key, i
  *  @param cost  cost
  *  @param block 移除完毕之后block会在内部的concurrent queue中回调
  */
-- (void)trimToCost:(NSUInteger)cost block:(nullable HYMemoryCacheBlock)block;
+- (void)trimToCost:(NSUInteger)cost block:(HYMemoryCacheBlock)block;
 
 /**
  *  移除对象，直到totalCostNow <= costLimit
  *
  *  @param block 移除完毕之后block会在内部的concurrent queue中回调
  */
-- (void)trimToCostLimitWithBlock:(nullable HYMemoryCacheBlock)block;
+- (void)trimToCostLimitWithBlock:(HYMemoryCacheBlock)block;
 
 @end
 

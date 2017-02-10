@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return cache
  */
-- (instancetype)initWithName:(NSString *)name;
+- (instancetype __nullable)initWithName:(NSString *)name;
 
 /**
  *  NS_DESIGNATED_INITIALIZER
@@ -48,14 +48,26 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return cache
  */
-- (instancetype)initWithName:(NSString *)name
-            andDirectoryPath:(NSString * _Nullable)directoryPath NS_DESIGNATED_INITIALIZER;
+- (instancetype __nullable)initWithName:(NSString *)name
+                       andDirectoryPath:(NSString *)directoryPath NS_DESIGNATED_INITIALIZER;
 
+/**
+ 同步获取
 
-- (nullable id)objectForKey:(NSString *)key;
+ @param key `key`
+ @return `object`
+ */
+- (__nullable id)objectForKey:(NSString *)key;
 
+/**
+ 异步获取
+ 
+ @param key `key`
+ @param block 回调 非主线程
+ @return `object`
+ */
 - (void)objectForKey:(NSString *)key
-           withBlock:(nullable void (^)(NSString *key ,id __nullable object))block;
+           withBlock:(void (^)(NSString *key ,id __nullable object))block;
 
 /**
  *  存储Object 会阻塞线程
@@ -63,7 +75,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  @param key    key
  *  @param inDisk 是否存储在disk中
  */
-- (void)setObject:(id<NSCoding>)object
+- (void)setObject:(id<NSCoding> __nullable)object
            forKey:(NSString *)key
            inDisk:(BOOL)inDisk;
 
@@ -72,9 +84,9 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @param key    key
  *  @param inDisk 是否存储在disk中
- *  @param block  block
+ *  @param block  block 回调 非主线程
  */
-- (void)setObject:(id<NSCoding>)object
+- (void)setObject:(id<NSCoding> __nullable)object
            forKey:(NSString *)key
            inDisk:(BOOL)inDisk
         withBlock:(void(^)())block;

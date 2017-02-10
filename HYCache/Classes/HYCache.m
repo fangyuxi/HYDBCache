@@ -30,24 +30,33 @@
     {
         _memCache = [[HYMemoryCache alloc] initWithName:name];
         _diskCache = [[HYDiskCache alloc] initWithName:name andDirectoryPath:directoryPath];
+        
+        if (!_memCache ||!_diskCache) {
+            _memCache = nil;
+            _diskCache = nil;
+            return nil;
+        }
         return self;
     }
     return nil;
     
 }
 
-- (nullable id)objectForKey:(NSString *)key
+- (__nullable id)objectForKey:(NSString *)key
 {
+    if (!key) return nil;
     id object = [self.memCache objectForKey:key];
     if (!object)
     {
         object = [self.diskCache objectForKey:key];
+        //回填到内存中
+        [self.memCache setObject:object forKey:key];
     }
     return object;
 }
 
 - (void)objectForKey:(NSString *)key
-           withBlock:(nullable void (^)(NSString *key ,id __nullable object))block
+           withBlock:(void (^)(NSString *key ,id __nullable object))block
 {
     if (!block) return;
     id object = [self.memCache objectForKey:key];
@@ -59,6 +68,7 @@
     {
         [self.diskCache objectForKey:key withBlock:^(HYDiskCache * _Nonnull cache, NSString * _Nonnull key, id  _Nullable object) {
             
+            //回填到内存中
             [self.memCache setObject:object forKey:key];
             block(key, object);
         }];
