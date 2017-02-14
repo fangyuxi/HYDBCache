@@ -302,7 +302,7 @@ static int64_t _HYDiskSpaceFree()
     else
         data = [NSKeyedArchiver archivedDataWithRootObject:object];
     
-    //小于20k的数据只存数据库，大于20k的文件只存文件
+    //小于16k的数据只存数据库，大于16k的文件只存文件
     BOOL dbStorageOnly = data.length > KHYCacheDBStorageThresholdSize ? NO : YES;
     lock();
     NSString *fileName = HYMD5(key);
