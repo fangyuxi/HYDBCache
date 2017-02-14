@@ -26,4 +26,4 @@ fangyuxi, fangyuxi@58.com
 
 ## License
 
-HYCache is available under the MIT license. See the LICENSE file for more info.
+HYDBCache is available under the MIT license. See the LICENSE file for more info.
