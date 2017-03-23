@@ -37,7 +37,7 @@
 
 /* Begin PBXFileReference section */
 		0553801FC886651E983E639B /* Pods-HYCache_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HYCache_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-HYCache_Tests/Pods-HYCache_Tests.debug.xcconfig"; sourceTree = "<group>"; };
-		31E0265E156C7ACFCC076624 /* HYCache.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = HYCache.podspec; path = ../HYCache.podspec; sourceTree = "<group>"; };
+		31E0265E156C7ACFCC076624 /* HYDBCache.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = HYDBCache.podspec; path = ../HYDBCache.podspec; sourceTree = "<group>"; };
 		46256907D7041AB131E92FFC /* Pods-HYCache_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HYCache_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-HYCache_Tests/Pods-HYCache_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		6003F58A195388D20070C39A /* HYCache_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HYCache_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F58D195388D20070C39A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -186,7 +186,7 @@
 		60FF7A9C1954A5C5007DD14C /* Podspec Metadata */ = {
 			isa = PBXGroup;
 			children = (
-				31E0265E156C7ACFCC076624 /* HYCache.podspec */,
+				31E0265E156C7ACFCC076624 /* HYDBCache.podspec */,
 				AB95060195E91AC96B3AE191 /* README.md */,
 				9B53F2D4A2C712EB784D4724 /* LICENSE */,
 			);
