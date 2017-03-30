@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1E3E89891E8D24F4003C8CD2 /* WBCacheBenchMaker.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E3E89881E8D24F4003C8CD2 /* WBCacheBenchMaker.m */; };
 		4EEED9E684244E12CF0D14E2 /* Pods_HYCache_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 720C01B66E63477E85C82ABE /* Pods_HYCache_Tests.framework */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58F195388D20070C39A /* CoreGraphics.framework */; };
@@ -37,6 +38,8 @@
 
 /* Begin PBXFileReference section */
 		0553801FC886651E983E639B /* Pods-HYCache_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HYCache_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-HYCache_Tests/Pods-HYCache_Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		1E3E89871E8D24F4003C8CD2 /* WBCacheBenchMaker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WBCacheBenchMaker.h; sourceTree = "<group>"; };
+		1E3E89881E8D24F4003C8CD2 /* WBCacheBenchMaker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WBCacheBenchMaker.m; sourceTree = "<group>"; };
 		31E0265E156C7ACFCC076624 /* HYDBCache.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = HYDBCache.podspec; path = ../HYDBCache.podspec; sourceTree = "<group>"; };
 		46256907D7041AB131E92FFC /* Pods-HYCache_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HYCache_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-HYCache_Tests/Pods-HYCache_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		6003F58A195388D20070C39A /* HYCache_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HYCache_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -143,6 +146,8 @@
 			children = (
 				6003F59C195388D20070C39A /* HYAppDelegate.h */,
 				6003F59D195388D20070C39A /* HYAppDelegate.m */,
+				1E3E89871E8D24F4003C8CD2 /* WBCacheBenchMaker.h */,
+				1E3E89881E8D24F4003C8CD2 /* WBCacheBenchMaker.m */,
 				873B8AEA1B1F5CCA007FD442 /* Main.storyboard */,
 				6003F5A5195388D20070C39A /* HYViewController.h */,
 				6003F5A6195388D20070C39A /* HYViewController.m */,
@@ -397,6 +402,7 @@
 				6003F59E195388D20070C39A /* HYAppDelegate.m in Sources */,
 				6003F5A7195388D20070C39A /* HYViewController.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
+				1E3E89891E8D24F4003C8CD2 /* WBCacheBenchMaker.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
