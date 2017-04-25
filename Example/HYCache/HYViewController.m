@@ -7,10 +7,7 @@
 //
 
 #import "HYViewController.h"
-#import "HYDBStorage.h"
-#import "HYDiskCacheItem.h"
-#import "HYDiskCache.h"
-
+#import "WBCacheBenchMaker.h"
 
 @interface HYViewController ()
 {
@@ -23,6 +20,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [[[WBCacheBenchMaker alloc] init ] start];
 
 }
 

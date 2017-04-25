@@ -312,11 +312,12 @@ static int64_t _HYDiskSpaceFree()
                   maxAge:maxAge
     shouldStoreValueInDB:dbStorageOnly];
     unLock();
-    
-    if (!dbStorageOnly) {
-        BOOL finishWrite = [_file writeData:data fileName:fileName];
-        if (!finishWrite) {
-            [_db removeItemWithKey:key];
+    if (finishDB) {
+        if (!dbStorageOnly) {
+            BOOL finishWrite = [_file writeData:data fileName:fileName];
+            if (!finishWrite) {
+                [_db removeItemWithKey:key];
+            }
         }
     }
     
@@ -534,7 +535,7 @@ static int64_t _HYDiskSpaceFree()
     unLock();
 }
 
-- (void)setTrimToMaxAgeInterval:(NSTimeInterval)trimToMaxAgeInterval
+- (void)setTrimToMaxAgeInterval:(NSInteger)trimToMaxAgeInterval
 {
     lock();
     _trimToMaxAgeInterval = trimToMaxAgeInterval;
@@ -543,7 +544,7 @@ static int64_t _HYDiskSpaceFree()
     [self _trimToAgeLimitRecursively];
 }
 
-- (NSTimeInterval)trimToMaxAgeInterval
+- (NSInteger)trimToMaxAgeInterval
 {
     lock();
     NSTimeInterval age = _trimToMaxAgeInterval;
