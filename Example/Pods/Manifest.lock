@@ -1,16 +1,16 @@
 PODS:
-  - HYCache (0.7)
+  - HYDBCache (0.7)
 
 DEPENDENCIES:
-  - HYCache (from `../`)
+  - HYDBCache (from `../`)
 
 EXTERNAL SOURCES:
-  HYCache:
-    :path: ../
+  HYDBCache:
+    :path: "../"
 
 SPEC CHECKSUMS:
-  HYCache: 9419c4b6327be4730be445fba65a39348a9b3f50
+  HYDBCache: 4f3fbeb3f93d3799ec02a05415141e460a100c48
 
-PODFILE CHECKSUM: 2cce52b331e8d6a90eca48107efa367b34f98c0b
+PODFILE CHECKSUM: 2704ae4347c42e6d348c42dfab925e442cf89514
 
-COCOAPODS: 1.1.1
+COCOAPODS: 1.2.1

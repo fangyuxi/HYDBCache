@@ -1,7 +1,7 @@
 # Acknowledgements
 This application makes use of the following third party libraries:
 
-## HYCache
+## HYDBCache
 
 Copyright (c) 2017 fangyuxi <fangyuxi@58.com>
 

@@ -64,7 +64,6 @@ NS_ASSUME_NONNULL_BEGIN
  
  @param key `key`
  @param block 回调 非主线程
- @return `object`
  */
 - (void)objectForKey:(NSString *)key
            withBlock:(void (^)(NSString *key ,id __nullable object))block;

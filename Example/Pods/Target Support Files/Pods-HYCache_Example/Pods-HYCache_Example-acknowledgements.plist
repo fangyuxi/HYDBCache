@@ -37,7 +37,7 @@ THE SOFTWARE.
 			<key>License</key>
 			<string>MIT</string>
 			<key>Title</key>
-			<string>HYCache</string>
+			<string>HYDBCache</string>
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
 		</dict>

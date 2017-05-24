@@ -12,9 +12,9 @@
 static const NSUInteger kMaxErrorRetryCount = 10;
 static const NSTimeInterval kMinRetryTimeInterval = 2.0;
 
-static NSString *const kDBName = @"manifest.sqlite";                ///<数据库主文件
+static NSString *const kDBName = @"manifest.sqlite";            ///<数据库主文件
 static NSString *const kDBShmFileName = @"manifest.sqlite-shm"; ///<开启wal模式后的缓存文件
-static NSString *const kDBWalFileName = @"manifest.sqlite-wal"; //<开启wal模式后的缓冲文件，可以选择手动标记checkpoint，本次实现选择自动checkpoint
+static NSString *const kDBWalFileName = @"manifest.sqlite-wal"; ///<可以选择手动标记checkpoint，本次实现选择自动checkpoint
 
 //开启mmap 大小控制在5M
 #define kSQLiteMMapSize (50*1024*1024)
@@ -22,8 +22,7 @@ static NSString *const kDBWalFileName = @"manifest.sqlite-wal"; //<开启wal模�
 // query result callback
 typedef int(^HYDBRunnerExecuteStatementsCallbackBlock)(NSDictionary *resultsDictionary);
 
-@interface HYDBStorage ()
-{
+@implementation HYDBStorage{
     sqlite3 *_db;
     CFMutableDictionaryRef _dbStmtCache;
     NSTimeInterval _dbLastOpenErrorTime;
@@ -32,10 +31,6 @@ typedef int(^HYDBRunnerExecuteStatementsCallbackBlock)(NSDictionary *resultsDict
     NSString *_rootPath;
     NSString *_dbPath;
 }
-
-@end
-
-@implementation HYDBStorage
 
 // query callback. avoid clang blabla.
 int _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
