@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
 s.name             = "HYDBCache"
-s.version          = "0.7"
+s.version          = "0.8"
 s.summary          = "A Cache Include Memory Cache and DiskCache"
 
 s.description      = "A Cache Include Memory Cache and DiskCache,Provide For HYTeam Use."

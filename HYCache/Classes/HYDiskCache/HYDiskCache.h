@@ -15,13 +15,11 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  Notifications Type
  */
-
 extern NSString *const KHYDiskCacheFileSystemStorageFullNotification;
 
 /**
  *  Notifications Keys
  */
-
 extern NSString *const KHYDiskCacheErrorKeyFreeSpace;
 
 /**
@@ -37,7 +35,6 @@ typedef void (^HYDiskCacheObjectBlock) (HYDiskCache *cache, NSString *key, id __
 /**
  all method & proterty thread-safe
  */
-
 @interface HYDiskCache : NSObject
 
 - (instancetype)init UNAVAILABLE_ATTRIBUTE;
