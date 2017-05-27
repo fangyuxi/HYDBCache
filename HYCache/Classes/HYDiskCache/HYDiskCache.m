@@ -15,7 +15,7 @@ NSString *const KHYDiskCacheFileSystemSpaceFullNotification = @"KHYDiskCacheFile
 NSString *const KHYDiskCacheErrorKeyFreeSpace = @"KHYDiskCacheErrorKeyFreeSpace";
 
 NSInteger const KHYCacheItemMaxAge = -1;
-NSInteger const KHYCacheDiskSpaceAlarmSize = 20 *  1024;
+NSInteger const KHYCacheDiskSpaceAlarmSize = 20 * 1024;
 
 //当缓存文件大于16k的时候，将文件写入文件系统，不存入数据库，和NSURLCache一样
 //sqlite3的数据写入要比写入文件快，但是读取的时候，大于16k的时候就开始慢于文件系统了
@@ -27,17 +27,17 @@ static NSString *const dataPath = @"data";
 static NSString *const trushPath = @"trush";
 static NSString *const metaPath = @"manifest";
 
+static CGFloat KTrimToMaxAgeDefaultInterval = 40.0f;
+
 #pragma mark lock
 
 dispatch_semaphore_t semaphoreLock;
 
-static inline void lock()
-{
+static inline void lock(){
     dispatch_semaphore_wait(semaphoreLock, DISPATCH_TIME_FOREVER);
 }
 
-static inline void unLock()
-{
+static inline void unLock(){
     dispatch_semaphore_signal(semaphoreLock);
 }
 
@@ -155,75 +155,64 @@ static int64_t _HYDiskSpaceFree()
 @synthesize customArchiveBlock = _customArchiveBlock;
 @synthesize customUnarchiveBlock = _customUnarchiveBlock;
 
-- (instancetype)init
-{
+- (instancetype)init{
     @throw [NSException exceptionWithName:@"HYDiskCache Must Have A Name" reason:@"Call initWithName: instead." userInfo:nil];
     
     return [self initWithName:@"" directoryPath:@""];
 }
 
-- (instancetype)initWithName:(NSString *)name
-{
+- (nullable instancetype)initWithName:(NSString *)name{
     return [self initWithName:name directoryPath:[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0]];
 }
 
-- (instancetype)initWithName:(NSString *)name
+- (nullable instancetype)initWithName:(NSString *)name
                directoryPath:(nullable NSString *)directoryPath
 {
     if (!name ||
-        name.length == 0 ||
-        !directoryPath ||
-        directoryPath.length == 0 ||
         ![name isKindOfClass:[NSString class]] ||
-        ![directoryPath isKindOfClass:[NSString class]])
-    {
-        @throw [NSException exceptionWithName:@"HYDiskCache Must Have A Name"
-                                       reason:@"The Name and DirectoryPath Could Not Be nil Or Empty"
+        name.length == 0){
+        @throw [NSException exceptionWithName:@"Cache Must Have A Name"
+                                       reason:@"The Cache Name Could Not Be nil Or Empty"
                                      userInfo:nil];
         return nil;
     }
     
     self = [super init];
-    if (self)
-    {
-        _name = [name copy];
-        _directoryPath = [directoryPath copy];
-        
-        _costLimit = ULONG_MAX;
-        _totalCostNow = 0;
-        _trimToMaxAgeInterval = 40.0f;
-        
-        semaphoreLock = dispatch_semaphore_create(1);
-        _dataQueue = dispatch_queue_create([dataQueueNamePrefix UTF8String], DISPATCH_QUEUE_CONCURRENT);
-        
-        _HYDiskSpaceFree();
-        
-        //创建路径
-        if (![self p_createPath])
-        {
-            NSLog(@"HYDiskCache Create Path Failed");
-            return nil;
-        }
-        
-        _db = [[HYDBStorage alloc] initWithDBPath:_cacheManifestPath];
-        _file = [[HYFileStorage alloc] initWithPath:_cacheDataPath trashPath:_cacheTrushPath];
-        
-        if (!_db || !_file) {
-            _db = nil;
-            _file = nil;
-            return nil;
-        }
-        
-        [self _trimToAgeLimitRecursively];
-        
-        return self;
+    
+    _name = [name copy];
+    _directoryPath = [directoryPath copy];
+    if (_directoryPath == nil || _directoryPath.length == 0) {
+        _directoryPath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0] copy];
     }
-    return nil;
+    _costLimit = ULONG_MAX;
+    _totalCostNow = 0;
+    _trimToMaxAgeInterval = KTrimToMaxAgeDefaultInterval;
+    semaphoreLock = dispatch_semaphore_create(1);
+    _dataQueue = dispatch_queue_create([dataQueueNamePrefix UTF8String], DISPATCH_QUEUE_CONCURRENT);
+    
+    _HYDiskSpaceFree();
+    
+    //创建路径
+    if (![self _createPath]){
+        NSLog(@"HYDiskCache Create Path Failed");
+        return nil;
+    }
+    
+    _db = [[HYDBStorage alloc] initWithDBPath:_cacheManifestPath];
+    _file = [[HYFileStorage alloc] initWithPath:_cacheDataPath trashPath:_cacheTrushPath];
+    
+    if (!_db || !_file) {
+        _db = nil;
+        _file = nil;
+        return nil;
+    }
+    [self _trimToAgeLimitRecursively];
+    return self;
 }
 
 #pragma mark private method
 
-- (BOOL)p_createPath
+- (BOOL)_createPath
 {
     _cachePath = [[_directoryPath stringByAppendingPathComponent:_name] copy];
     _cacheDataPath = [[_cachePath stringByAppendingPathComponent:dataPath] copy];
@@ -241,8 +230,7 @@ static int64_t _HYDiskSpaceFree()
         ![[NSFileManager defaultManager] createDirectoryAtPath:_cacheManifestPath
                                    withIntermediateDirectories:YES
                                                     attributes:nil
-                                                         error:nil])
-    {
+                                                         error:nil]){
         return NO;
     }
     return YES;
@@ -250,42 +238,44 @@ static int64_t _HYDiskSpaceFree()
 
 #pragma mark store object
 
-- (void)setObject:(id<NSCoding>)object
+- (void)setObject:(id _Nullable)object
            forKey:(NSString *)key
-        withBlock:(__nullable HYDiskCacheObjectBlock)block
-{
-    [self setObject:object forKey:key maxAge:KHYCacheItemMaxAge withBlock:block];
+        withBlock:(HYDiskCacheObjectBlock)block{
+    [self setObject:object
+             forKey:key
+             maxAge:KHYCacheItemMaxAge
+          withBlock:block];
 }
 
-- (void)setObject:(id<NSCoding>)object
+- (void)setObject:(id _Nullable)object
            forKey:(NSString *)key
            maxAge:(NSInteger)maxAge
-        withBlock:(__nullable HYDiskCacheObjectBlock)block
-{
+        withBlock:(HYDiskCacheObjectBlock)block{
     __weak HYDiskCache *weakSelf = self;
     dispatch_async(_dataQueue, ^{
-        
         __strong HYDiskCache *stronglySelf = weakSelf;
         [stronglySelf setObject:object forKey:key maxAge:maxAge];
-        
-        if (block)
-        {
+        if (block){
             block(stronglySelf, key, object);
         }
     });
 }
 
-- (void)setObject:(id<NSCoding>)object
-           forKey:(NSString *)key
-{
-    [self setObject:object forKey:key maxAge:KHYCacheItemMaxAge]; //never
+- (void)setObject:(id _Nullable)object
+           forKey:(NSString *)key{
+    [self setObject:object
+             forKey:key
+             maxAge:KHYCacheItemMaxAge];
 }
 
-- (void)setObject:(id<NSCoding>)object
+- (void)setObject:(id _Nullable)object
            forKey:(NSString *)key
            maxAge:(NSInteger)maxAge
 {
-    if (!object || !key || ![key isKindOfClass:[NSString class]] || key.length == 0){
+    if (!object ||
+        !key ||
+        ![key isKindOfClass:[NSString class]] ||
+        key.length == 0){
         return;
     }
     
@@ -297,11 +287,14 @@ static int64_t _HYDiskSpaceFree()
     _HYCacheBackgourndTask *task = [_HYCacheBackgourndTask _startBackgroundTask];
     
     NSData *data;
-    if (self.customArchiveBlock)
+    if (self.customArchiveBlock){
         data = self.customArchiveBlock(object);
-    else
+    }else if([object conformsToProtocol:@protocol(NSCoding)]){
         data = [NSKeyedArchiver archivedDataWithRootObject:object];
-    
+    }else{
+        @throw [NSException exceptionWithName:@"HYDiskCache Cache Error" reason:@"缓存对象要么遵守NSCoding协议，要么提供customArchiveBlock" userInfo:nil];
+    }
+
     //小于16k的数据只存数据库，大于16k的文件只存文件
     BOOL dbStorageOnly = data.length > KHYCacheDBStorageThresholdSize ? NO : YES;
     lock();
@@ -325,23 +318,20 @@ static int64_t _HYDiskSpaceFree()
 }
 
 - (void)objectForKey:(id)key
-           withBlock:(HYDiskCacheObjectBlock)block
-{
+           withBlock:(HYDiskCacheObjectBlock)block{
     __weak HYDiskCache *weakSelf = self;
     dispatch_async(_dataQueue, ^{
-        
         __strong HYDiskCache *stronglySelf = weakSelf;
         NSObject *object = [stronglySelf objectForKey:key];
-        if (block)
-        {
+        if (block){
             block(stronglySelf, key, object);
         }
     });
 }
 
-- (id __nullable )objectForKey:(NSString *)key
-{
-    if (key.length == 0 || ![key isKindOfClass:[NSString class]]){
+- (nullable id)objectForKey:(NSString *)key{
+    if (key.length == 0 ||
+        ![key isKindOfClass:[NSString class]]){
         return nil;
     }
         
@@ -350,14 +340,16 @@ static int64_t _HYDiskSpaceFree()
     lock();
     HYDiskCacheItem *item = [_db getItemForKey:key];
     unLock();
-    
+    //不存在
     if (!item) {
         return nil;
     }
-    if (item.maxAge != KHYCacheItemMaxAge && (NSInteger)time(NULL) - item.inTimeStamp > item.maxAge) {
+    //存在但是超时
+    if (item.maxAge != KHYCacheItemMaxAge
+        && (NSInteger)time(NULL) - item.inTimeStamp > item.maxAge) {
         return nil;
     }
-    
+    //数据是存在数据库中还是文件系统中
     item.value.length > 0 ? (data = item.value) : (data = [_file fileReadWithName:item.fileName]);
     
     id object;
@@ -377,23 +369,21 @@ static int64_t _HYDiskSpaceFree()
 }
 
 - (void)removeObjectForKey:(NSString *)key
-                 withBlock:(HYDiskCacheBlock)block
-{
+                 withBlock:(HYDiskCacheBlock)block{
     __weak HYDiskCache *weakSelf = self;
     dispatch_async(_dataQueue, ^{
-        
         __strong HYDiskCache *stronglySelf = weakSelf;
         [self removeObjectForKey:key];
-        if (block)
-        {
+        if (block){
             block(stronglySelf);
         }
     });
 }
 
-- (void)removeObjectForKey:(NSString *)key
-{
-    if(![key isKindOfClass:[NSString class]] || key.length == 0) return;
+- (void)removeObjectForKey:(NSString *)key{
+    if(![key isKindOfClass:[NSString class]] || key.length == 0){
+        return;
+    }
     
     lock();
     HYDiskCacheItem *item = [_db getItemForKey:key];
@@ -402,31 +392,27 @@ static int64_t _HYDiskSpaceFree()
     if (item) {
         NSString *fileName = item.fileName;
         if (fileName && fileName.length > 0) {
-            [_file fileDeleteWithName:fileName];
+            if([_file fileDeleteWithName:fileName]){
+                lock();
+                [_db removeItem:item];
+                unLock();
+            }
         }
-        lock();
-        [_db removeItem:item];
-        unLock();
     }
-    
 }
 
-- (void)removeAllObjectWithBlock:(HYDiskCacheBlock)block
-{
+- (void)removeAllObjectWithBlock:(HYDiskCacheBlock)block{
     __weak HYDiskCache *weakSelf = self;
     dispatch_async(_dataQueue, ^{
-        
         __strong HYDiskCache *stronglySelf = weakSelf;
         [self removeAllObject];
-        if (block)
-        {
+        if (block){
             block(stronglySelf);
         }
     });
 }
 
-- (void)removeAllObject
-{
+- (void)removeAllObject{
     lock();
     [_db removeAllItems];
     unLock();
@@ -435,9 +421,10 @@ static int64_t _HYDiskSpaceFree()
     [_file removeAllTrashFileInBackground];
 }
 
-- (BOOL)containsObjectForKey:(id)key
-{
-    if (!key) return NO;
+- (BOOL)containsObjectForKey:(id)key{
+    if (!key){
+        return NO;
+    }
     
     lock();
     BOOL contained = [_db containsItemForKey:key];
@@ -446,9 +433,12 @@ static int64_t _HYDiskSpaceFree()
     return contained;
 }
 
+- (void)trimToCostLimitWithBlock:(HYDiskCacheBlock)block{
+    [self trimToCost:self.costLimit block:block];
+}
+
 - (void)trimToCost:(NSUInteger)cost
-             block:(HYDiskCacheBlock)block;
-{
+             block:(HYDiskCacheBlock)block;{
     if (cost == 0) {
         [self removeAllObjectWithBlock:block];
         return;
@@ -457,10 +447,12 @@ static int64_t _HYDiskSpaceFree()
         return;
     }
     
+    lock();
     NSUInteger count = [_db getTotalItemCount];
+    unLock();
+    
     __weak HYDiskCache *weakSelf = self;
     dispatch_async(_dataQueue, ^{
-        
         __strong HYDiskCache *stronglySelf = weakSelf;
         do{
             lock();
@@ -477,13 +469,7 @@ static int64_t _HYDiskSpaceFree()
     });
 }
 
-- (void)trimToCostLimitWithBlock:(HYDiskCacheBlock)block
-{
-    [self trimToCost:self.costLimit block:block];
-}
-
-- (void)_trimToAgeLimitRecursively
-{
+- (void)_trimToAgeLimitRecursively{
     lock();
     NSTimeInterval trimInterval = _trimToMaxAgeInterval;
     unLock();
@@ -509,16 +495,14 @@ static int64_t _HYDiskSpaceFree()
 
 #pragma mark getter setter for thread-safe
 
-- (NSUInteger)totalCostNow
-{
+- (NSUInteger)totalCostNow{
     lock();
     NSUInteger cost = [_db getTotalItemSize];
     unLock();
     return cost;
 }
 
-- (NSUInteger)costLimit
-{
+- (NSUInteger)costLimit{
     
     lock();
     NSUInteger limit = _costLimit;
@@ -528,15 +512,13 @@ static int64_t _HYDiskSpaceFree()
     
 }
 
-- (void)setCostLimit:(NSUInteger)byteCostLimit
-{
+- (void)setCostLimit:(NSUInteger)byteCostLimit{
     lock();
     _costLimit = byteCostLimit;
     unLock();
 }
 
-- (void)setTrimToMaxAgeInterval:(NSInteger)trimToMaxAgeInterval
-{
+- (void)setTrimToMaxAgeInterval:(NSInteger)trimToMaxAgeInterval{
     lock();
     _trimToMaxAgeInterval = trimToMaxAgeInterval;
     unLock();
@@ -544,8 +526,7 @@ static int64_t _HYDiskSpaceFree()
     [self _trimToAgeLimitRecursively];
 }
 
-- (NSInteger)trimToMaxAgeInterval
-{
+- (NSInteger)trimToMaxAgeInterval{
     lock();
     NSTimeInterval age = _trimToMaxAgeInterval;
     unLock();
@@ -553,30 +534,26 @@ static int64_t _HYDiskSpaceFree()
     return age;
 }
 
-- (void)setCustomArchiveBlock:(NSData * _Nonnull (^)(id _Nonnull))customArchiveBlock
-{
+- (void)setCustomArchiveBlock:(NSData * _Nonnull (^)(id _Nonnull))customArchiveBlock{
     lock();
     _customArchiveBlock = [customArchiveBlock copy];
     unLock();
 }
 
-- (NSData * _Nonnull(^)(id _Nonnull))customArchiveBlock
-{
+- (NSData * _Nonnull(^)(id _Nonnull))customArchiveBlock{
     lock();
     NSData *(^block)(id)  = _customArchiveBlock;
     unLock();
     return block;
 }
 
-- (void)setCustomUnarchiveBlock:(id  _Nonnull (^)(NSData * _Nonnull))customUnarchiveBlock
-{
+- (void)setCustomUnarchiveBlock:(id  _Nonnull (^)(NSData * _Nonnull))customUnarchiveBlock{
     lock();
     _customUnarchiveBlock = [customUnarchiveBlock copy];
     unLock();
 }
 
-- (id (^)(NSData *))customUnarchiveBlock
-{
+- (id (^)(NSData *))customUnarchiveBlock{
     lock();
     id (^block)(NSData *) = _customUnarchiveBlock;
     unLock();
