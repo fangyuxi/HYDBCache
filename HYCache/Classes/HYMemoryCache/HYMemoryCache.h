@@ -1,6 +1,6 @@
 //
 //  HYMemoryCache.h
-//  <https://github.com/fangyuxi/HYCache>
+//  <https://github.com/fangyuxi/HDBYCache>
 //
 //  Created by fangyuxi on 16/4/5.
 //
@@ -14,177 +14,225 @@ NS_ASSUME_NONNULL_BEGIN
 @class HYMemoryCache;
 
 typedef void (^HYMemoryCacheBlock) (HYMemoryCache *cache);
-typedef void (^HYMemoryCacheObjectBlock) (HYMemoryCache *cache, NSString *key, id __nullable object);
+typedef void (^HYMemoryCacheObjectBlock) (HYMemoryCache *cache, NSString *key, id _Nullable object);
 
 
 @interface HYMemoryCache : NSObject
 
+/**
+ 禁用初始化方法
+ */
 - (instancetype)init UNAVAILABLE_ATTRIBUTE;
 + (instancetype)new UNAVAILABLE_ATTRIBUTE;
 
 /**
- *  指定初始化函数
- *
- *  @param name 缓存的名字，会用于queue的名字，便于调试，
-    如果有多个缓存对象，名字请唯一
- *
- *  @return cache object
+ 指定初始化方法
+
+ @param name 缓存名
+ @return 缓存对象
  */
-- (instancetype)initWithName:(NSString *)name NS_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithName:(NSString *)name NS_DESIGNATED_INITIALIZER;
 
 /**
- *  name
+ 缓存名
  */
 @property (nonatomic, copy, readonly) NSString *name;
 
 /**
- *  当前的cost
+ 当前的缓存大小
  */
 @property (nonatomic, assign, readonly) NSUInteger costNow;
+
 /**
- *  设置最大cost
+ 设置缓存最大存储，默认为最大
  */
 @property (nonatomic, assign) NSUInteger costLimit;
 
 /**
- *  移除时间间隔 cache会定期移除已经超过maxAge的对象
+ 缓存会定期清除存储时间已经超过MaxAge的对象，此属性为设置此移除时间，默认30秒
  */
 @property (nonatomic, assign) NSTimeInterval trimToMaxAgeInterval;
 
 /**
- *  默认 yes
+ 默认 true
  */
 @property(nonatomic, assign) BOOL removeObjectWhenAppReceiveMemoryWarning;
 
 /**
- *  默认 NO
+ 默认 false
  */
 @property(nonatomic, assign) BOOL removeObjectWhenAppEnterBackground;
 
+
 /**
- *  异步存储对象，该方法会立即返回，添加完毕之后block会在内部的concurrent queue中回调
-    block
- *
- *  @param object 存储的对象，如果为空，则不会插入，block对象会回调
- *  @param key    存储对象的键，如果为空，则不会插入，block对象会回调
- *  @param block  存储结束的回调，在concurrent queue中执行
+ 异步存储
+ 
+ Notice!! 对象的MaxAge为LDBL_MAX.此方法不会记录object的cost，这样会影响缓存的清理工作，如果是ttl缓存
+          那么可以忽略这个影响，如果对缓存的内存控制做了设置，那么请关注下面的方法:
+ 
+ '- (void)setObject:(id _Nullable)object
+             forKey:(id)key
+             withCost:(NSUInteger)cost
+             withBlock:(HYMemoryCacheObjectBlock)block'
+
+ @param object 'object'
+ @param key 'key'
+ @param block 'result'
  */
-- (void)setObject:(id __nullable)object
+- (void)setObject:(id _Nullable)object
            forKey:(id)key
         withBlock:(HYMemoryCacheObjectBlock)block;
 
+
 /**
- *  同步存储对象，该方法会阻塞调用的线程，直到存储完成
- *
- *  @param object 存储的对象，如果为空，则不会插入
- *  @param key    存储对象的键，如果为空，则不会插入
+ 同步存储对象
+ 
+ Notice!! 对象的MaxAge为LDBL_MAX.此方法不会记录object的cost，这样会影响缓存的清理工作，如果是ttl缓存
+          那么可以忽略这个影响，如果对缓存的内存控制做了设置，那么请关注下面的方法:
+ 
+ '- (void)setObject:(id _Nullable)object
+             forKey:(id)key
+             withCost:(NSUInteger)cost'
+
+ @param object 'object'
+ @param key 'key'
  */
-- (void)setObject:(id __nullable)object
+- (void)setObject:(id _Nullable)object
            forKey:(id)key;
 
+
 /**
- *  异步存储对象，该方法会立即返回，添加完毕之后block会在内部的concurrent queue中回调
-    block，cost为插入对象的大小，赋值有助于更准确的淘汰对象
- *
- *  @param object 存储的对象，如果为空，则不会插入，block对象会回调
- *  @param key    存储对象的键，如果为空，则不会插入，block对象会回调
- *  @param cost   cost为插入对象的大小，赋值有助于更准确的淘汰对象
- *  @param block  存储结束的回调，在concurrent queue中执行
+ 异步存储对象
+ 
+ Notice!! 对象的MaxAge为LDBL_MAX
+
+ @param object 'object'
+ @param key 'key'
+ @param cost 'cost'
+ @param block 'result'
  */
-- (void)setObject:(id __nullable)object
+- (void)setObject:(id _Nullable)object
            forKey:(id)key
          withCost:(NSUInteger)cost
         withBlock:(HYMemoryCacheObjectBlock)block;
 
-- (void)setObject:(id __nullable)object
+/**
+ 异步存储对象
+ 
+ Notice!! 对象的MaxAge为LDBL_MAX
+ 
+ @param object 'object'
+ @param key 'key'
+ @param cost 'cost'
+ @param maxAge 'maxAge'
+ @param block 'result'
+ */
+- (void)setObject:(id _Nullable)object
            forKey:(id)key
          withCost:(NSUInteger)cost
            maxAge:(NSTimeInterval)maxAge
         withBlock:(HYMemoryCacheObjectBlock)block;
 
 /**
- *  同步存储对象，该方法会阻塞调用的线程，直到存储完成
-    cost为插入对象的大小，赋值有助于更准确的淘汰对象
- *
- *  @param object 存储的对象，如果为空，则不会插入，block对象会回调
- *  @param key    存储对象的键，如果为空，则不会插入，block对象会回调
- *  @param cost   cost为插入对象的大小，赋值有助于更准确的淘汰对象
+ 同步存储对象
+ 
+ Notice!! 对象的MaxAge为LDBL_MAX
+ 
+ @param object 'object'
+ @param key 'key'
+ @param cost 'cost'
  */
-- (void)setObject:(id __nullable)object
+- (void)setObject:(id _Nullable)object
            forKey:(id)key
          withCost:(NSUInteger)cost;
 
-- (void)setObject:(id __nullable)object
+/**
+ 同步存储对象
+ 
+ Notice!! 对象的MaxAge为LDBL_MAX
+ 
+ @param object 'object'
+ @param key 'key'
+ @param cost 'cost'
+ @param maxAge 'maxAge'
+ */
+- (void)setObject:(id _Nullable)object
            forKey:(id)key
            maxAge:(NSTimeInterval)maxAge
          withCost:(NSUInteger)cost;
-/**
- *  同步获取对象，该方法会阻塞调用的线程，直到获取完成
- *
- *  @param key 存储对象的键，不能为空
- *
- *  @return 如果没找到相应object则返回空
- */
-- (id __nullable )objectForKey:(NSString *)key;
 
 /**
- *  异步获取对象，该方法会立即返回，获取完毕之后block会在内部的concurrent queue中回调
- *
- *  @param key   存储对象的键，不能为空
- *  @param block 返回值 key object  cache object
+ 异步获取
+ 
+ @param key 'key'
+ @param block 'result'
  */
 - (void)objectForKey:(id)key
            withBlock:(HYMemoryCacheObjectBlock)block;
 
+
 /**
- *  异步移除对象，移除完毕之后block会在内部的concurrent queue中回调
- *
- *  @param key   存储对象的键，不能为空
- *  @param block 返回值 key object(已经被移除的对象) cache object
+ 同步获取
+
+ @param key 'key'
+ @return 'object'
+ */
+- (nullable id)objectForKey:(NSString *)key;
+
+
+
+/**
+ 异步移除
+
+ @param key 'key'
+ @param block 'result'
  */
 - (void)removeObjectForKey:(id)key
                  withBlock:(HYMemoryCacheObjectBlock)block;
 
 /**
- *  同步移除对象
- *
- *  @param key 存储对象的键，不能为空
+ 同步移除
+ 
+ @param key 'key'
  */
 - (void)removeObjectForKey:(id)key;
 
+
 /**
- *  异步移除所有对象，移除完毕之后block会在内部的concurrent queue中回调
- *
- *  @param block 返回值 cache object
+ 异步移除所有
+
+ @param block 'ressult'
  */
 - (void)removeAllObjectWithBlock:(HYMemoryCacheBlock)block;
 
+
 /**
- *  同步移除所有对象
+ 同步移除所有对象
  */
 - (void)removeAllObject;
 
+
 /**
- *  查询是否包含这个key value
- *
- *  @param key 存储对象的键，不能为空
- *
- *  @return BOOL
+ 是否包含
+
+ @param key 'key'
+ @return 'result'
  */
 - (BOOL)containsObjectForKey:(id)key;
 
+
 /**
- *  移除对象，直到totalCostNow <= cost
- *
- *  @param cost  cost
- *  @param block 移除完毕之后block会在内部的concurrent queue中回调
+ 移除对象，直到缓存大小小于cost
+
+ @param cost '目标cost'
+ @param block 'result'
  */
 - (void)trimToCost:(NSUInteger)cost block:(HYMemoryCacheBlock)block;
 
 /**
- *  移除对象，直到totalCostNow <= costLimit
- *
- *  @param block 移除完毕之后block会在内部的concurrent queue中回调
+ 移除对象，直到缓存大小小于constLimit
+ 
+ @param block 'result'
  */
 - (void)trimToCostLimitWithBlock:(HYMemoryCacheBlock)block;
 

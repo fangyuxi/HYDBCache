@@ -46,7 +46,7 @@ int _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
         return SQLITE_OK;
     }
     
-    NSInteger (^execCallbackBlock)(NSDictionary *resultsDictionary) = (__bridge NSInteger (^)(NSDictionary *__strong))(theBlockAsVoid);
+    int (^execCallbackBlock)(NSDictionary *resultsDictionary) = (__bridge int (^)(NSDictionary *__strong))(theBlockAsVoid);
     
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithCapacity:(NSUInteger)columns];
     

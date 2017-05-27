@@ -19,7 +19,7 @@ NSInteger const KHYCacheDiskSpaceAlarmSize = 20 *  1024;
 
 //当缓存文件大于16k的时候，将文件写入文件系统，不存入数据库，和NSURLCache一样
 //sqlite3的数据写入要比写入文件快，但是读取的时候，大于16k的时候就开始慢于文件系统了
-NSInteger const KHYCacheDBStorageThresholdSize  = 2014 * 16;
+NSInteger const KHYCacheDBStorageThresholdSize = 1024 * 16;
 
 static NSString *const dataQueueNamePrefix = @"com.HYDiskCache.ConcurrentQueue.";
 

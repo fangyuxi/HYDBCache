@@ -1,6 +1,6 @@
 //
 //  HYDiskCache.h
-//  <https://github.com/fangyuxi/HYDBCache>
+//  <https://github.com/fangyuxi/HDBYCache>
 //
 //  Created by fangyuxi on 16/4/5.
 //

@@ -20,8 +20,10 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [[[WBCacheBenchMaker alloc] init ] start];
-
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[[WBCacheBenchMaker alloc] init ] startDisk];
+    });
 }
 
 @end

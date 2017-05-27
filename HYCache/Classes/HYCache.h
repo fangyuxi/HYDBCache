@@ -1,6 +1,6 @@
 //
 //  HYCache.h
-//  <https://github.com/fangyuxi/HYCache>
+//  <https://github.com/fangyuxi/HDBYCache>
 //
 //  Created by fangyuxi on 16/4/15.
 //
@@ -15,101 +15,93 @@ NS_ASSUME_NONNULL_BEGIN
 @interface HYCache : NSObject
 
 /**
- *  内存缓存 可配置
+ 内存缓存
  */
 @property (nonatomic, readonly) HYMemoryCache *memCache;
+
 /**
- *  闪存缓存 可配置
+ 闪存缓存
  */
 @property (nonatomic, readonly) HYDiskCache *diskCache;
 
 /**
- *  Do not use below init methods
- *
- *  @return nil
+ 禁用初始化方法
  */
 - (instancetype)init UNAVAILABLE_ATTRIBUTE;
 + (instancetype)new UNAVAILABLE_ATTRIBUTE;
 
-/**
- *  init method
- *
- *  @param name name for debug call stack tree
- *
- *  @return cache
- */
-- (instancetype __nullable)initWithName:(NSString *)name;
 
 /**
- *  NS_DESIGNATED_INITIALIZER
- *
- *  @param name          name for debug call stack tree
- *  @param directoryPath path for diskCache defautl is library/cache/name
- *
- *  @return cache
+ 创建内存缓存和闪存缓存 路径默认为 NSCachesDirectory
+
+ @param name 缓存名字
+ @return 缓存
  */
-- (instancetype __nullable)initWithName:(NSString *)name
-                          directoryPath:(NSString *)directoryPath NS_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithName:(NSString *)name;
+
 
 /**
- 同步获取
+ 指定初始化方法
 
- @param key `key`
- @return `object`
+ @param name 缓存名字
+ @param directoryPath 缓存路径 默认为 NSCachesDirectory
+ @return 缓存
  */
-- (__nullable id)objectForKey:(NSString *)key;
+- (nullable instancetype)initWithName:(NSString *)name
+                          directoryPath:(nullable NSString *)directoryPath NS_DESIGNATED_INITIALIZER;
+
+/**
+ 同步获取数据
+
+ @param key 'key'
+ @return 'object'
+ */
+- (nullable id)objectForKey:(NSString *)key;
 
 /**
  异步获取
  
  @param key `key`
- @param block 回调 非主线程
+ @param block 在非主线程中运行
  */
 - (void)objectForKey:(NSString *)key
-           withBlock:(void (^)(NSString *key ,id __nullable object))block;
+           withBlock:(void (^)(NSString *key ,id _Nullable object))block;
 
 /**
- *  存储Object 会阻塞线程
- *
- *  @param key    key
- *  @param inDisk 是否存储在disk中
+ 同步存储Object
+ 
+ @param key    key
+ @param inDisk 是否同时存储在disk中
  */
-- (void)setObject:(id<NSCoding> __nullable)object
+- (void)setObject:(id<NSCoding> _Nullable)object
            forKey:(NSString *)key
            inDisk:(BOOL)inDisk;
 
 /**
- *  存储Object 不阻塞线程，存储完毕回调block
- *
- *  @param key    key
- *  @param inDisk 是否存储在disk中
- *  @param block  block 回调 非主线程
+ 异步存储Object
+ 
+ @param key    key
+ @param inDisk 是否存储在disk中
+ @param block  block 回调 非主线程
  */
-- (void)setObject:(id<NSCoding> __nullable)object
+- (void)setObject:(id<NSCoding> _Nullable)object
            forKey:(NSString *)key
            inDisk:(BOOL)inDisk
         withBlock:(void(^)())block;
 
+
 /**
- *  移除对象 会阻塞线程
+ 同步移除所有对象
  */
 - (void)removeAllObjects;
 
 /**
- *  异步移除对象
- *
- *  @param block block
+ 异步移除所有数据
+
+ @param block 在非主线程中运行
  */
 - (void)removeAllObjectsWithBlock:(void(^)())block;
 
-/**
- *  是否包含对象
- *
- *  @param key   key
- *  @param block block
- */
-- (void)containsObjectForKey:(NSString *)key
-                   withBlock:(void(^)(BOOL contained))block;
 @end
 
 NS_ASSUME_NONNULL_END

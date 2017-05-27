@@ -10,6 +10,6 @@
 
 @interface WBCacheBenchMaker : NSObject
 
-- (void)start;
+- (void)startDisk;
 
 @end
