@@ -14,16 +14,16 @@
 @implementation WBCacheBenchMaker
 
 - (void)startDisk{
-    //[self writeLarge];
-    [self writeSmall];
+    [self writeLarge];
+    //[self writeSmall];
     //[self writeLargeMultiThreadLarge];
-    [self writeLargeMultiThreadSmall];
+    //[self writeLargeMultiThreadSmall];
 }
 
 - (void)writeSmall{
     HYDiskCache *hyDisk = [[HYDiskCache alloc] initWithName:@"hyDiskSmall"];
     
-    NSInteger count = 10000;
+    NSInteger count = 1000;
     NSMutableArray *keys = [NSMutableArray new];
     for (int i = 0; i < count; i++) {
         NSString *key = @(i).description;

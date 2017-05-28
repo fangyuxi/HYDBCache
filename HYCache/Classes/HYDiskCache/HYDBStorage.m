@@ -24,9 +24,10 @@ typedef int(^HYDBRunnerExecuteStatementsCallbackBlock)(NSDictionary *resultsDict
 
 @implementation HYDBStorage{
     sqlite3 *_db;
-    CFMutableDictionaryRef _dbStmtCache;
-    NSTimeInterval _dbLastOpenErrorTime;
-    NSUInteger _dbOpenErrorCount;
+    CFMutableDictionaryRef _stmtCache;
+    NSTimeInterval _lastOpenErrorTime;
+    NSTimeInterval _startBusyRetryTime;
+    NSUInteger _openErrorCount;
     
     NSString *_rootPath;
     NSString *_dbPath;
@@ -59,6 +60,29 @@ int _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
     
     return execCallbackBlock(dictionary);
 }
+
+static int HYDBStorageBusyHandler(void *f, int count) {
+    HYDBStorage *self = (__bridge HYDBStorage*)f;
+    
+    if (count == 0) {
+        self->_startBusyRetryTime = [NSDate timeIntervalSinceReferenceDate];
+        return 1;
+    }
+    
+    NSTimeInterval delta = [NSDate timeIntervalSinceReferenceDate] - (self->_startBusyRetryTime);
+    
+    if (delta < [self maxBusyRetryTimeInterval]) {
+        int requestedSleepInMillseconds = (int) arc4random_uniform(50) + 50;
+        int actualSleepInMilliseconds = sqlite3_sleep(requestedSleepInMillseconds);
+        if (actualSleepInMilliseconds != requestedSleepInMillseconds) {
+            NSLog(@"WARNING: Requested sleep of %i milliseconds, but SQLite returned %i. Maybe SQLite wasn't built with HAVE_USLEEP=1?", requestedSleepInMillseconds, actualSleepInMilliseconds);
+        }
+        return 1;
+    }
+    
+    return 0;
+}
+
 
 - (void)dealloc
 {
@@ -101,6 +125,23 @@ int _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
     return nil;
 }
 
+- (void)setMaxBusyRetryTimeInterval:(NSTimeInterval)timeout {
+    
+    _maxBusyRetryTimeInterval = timeout;
+    if (!_db) {
+        return;
+    }
+    
+    if (timeout > 0) {
+        sqlite3_busy_handler(_db, &HYDBStorageBusyHandler, (__bridge void *)(self));
+    }
+    else {
+        // turn it off otherwise
+        sqlite3_busy_handler(_db, nil, nil);
+    }
+}
+
+
 - (BOOL)_open
 {
     if (_db){
@@ -108,7 +149,7 @@ int _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
     }
     
     //关闭内存申请统计
-    sqlite3_config(SQLITE_CONFIG_MEMSTATUS, 0);
+    sqlite3_config(SQLITE_CONFIG_MEMSTATUS, false);
     //尝试打开mmap
     sqlite3_config(SQLITE_CONFIG_MMAP_SIZE, (SInt64)kSQLiteMMapSize, (SInt64)-1);
     //多个线程可以共享connection
@@ -118,18 +159,18 @@ int _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
     if (result == SQLITE_OK) {
         CFDictionaryKeyCallBacks keyCallbacks = kCFCopyStringDictionaryKeyCallBacks;
         CFDictionaryValueCallBacks valueCallbacks = {0};
-        _dbStmtCache = CFDictionaryCreateMutable(CFAllocatorGetDefault(), 0, &keyCallbacks, &valueCallbacks);
-        _dbLastOpenErrorTime = 0;
-        _dbOpenErrorCount = 0;
+        _stmtCache = CFDictionaryCreateMutable(CFAllocatorGetDefault(), 0, &keyCallbacks, &valueCallbacks);
+        _lastOpenErrorTime = 0;
+        _openErrorCount = 0;
         return YES;
     } else {
         _db = NULL;
-        if (_dbStmtCache) {
-            CFRelease(_dbStmtCache);
+        if (_stmtCache) {
+            CFRelease(_stmtCache);
         }
-        _dbStmtCache = NULL;
-        _dbLastOpenErrorTime = CACurrentMediaTime();
-        _dbOpenErrorCount++;
+        _stmtCache = NULL;
+        _lastOpenErrorTime = CACurrentMediaTime();
+        _openErrorCount++;
         
         if (_logsEnabled) {
             NSLog(@"%s line:%d sqlite open failed (%ld).",
@@ -149,33 +190,33 @@ int _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
         return YES;
     }
     
-    NSInteger  result = 0;
+    int  rc = 0;
     BOOL retry = NO;
-    BOOL stmtFinalized = NO;
+    BOOL triedFinalizingOpenStatements = NO;
     
-    if (_dbStmtCache) {
-        CFRelease(_dbStmtCache);
+    if (_stmtCache) {
+        CFRelease(_stmtCache);
     }
-    _dbStmtCache = NULL;
+    _stmtCache = NULL;
     
     do {
         retry = NO;
-        result = sqlite3_close(_db);
-        if (result == SQLITE_BUSY || result == SQLITE_LOCKED) {
-            if (!stmtFinalized) {
-                stmtFinalized = YES;
+        rc = sqlite3_close(_db);
+        if (rc == SQLITE_BUSY || rc == SQLITE_LOCKED) {
+            if (!triedFinalizingOpenStatements) {
+                triedFinalizingOpenStatements = YES;
                 sqlite3_stmt *stmt;
                 while ((stmt = sqlite3_next_stmt(_db, nil)) != 0) {
                     sqlite3_finalize(stmt);
                     retry = YES;
                 }
             }
-        } else if (result != SQLITE_OK) {
+        } else if (rc != SQLITE_OK) {
             if (_logsEnabled) {
                 NSLog(@"%s line:%d sqlite close failed (%ld).",
                       __FUNCTION__,
                       __LINE__,
-                      (long)result);
+                      (long)rc);
             }
         }
     } while (retry);
@@ -185,8 +226,8 @@ int _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
 
 - (BOOL)_check {
     if (!_db) {
-        if (_dbOpenErrorCount < kMaxErrorRetryCount &&
-            CACurrentMediaTime() - _dbLastOpenErrorTime > kMinRetryTimeInterval) {
+        if (_openErrorCount < kMaxErrorRetryCount &&
+            CACurrentMediaTime() - _lastOpenErrorTime > kMinRetryTimeInterval) {
             return [self _open] && [self _createTable];
         } else {
             return NO;
@@ -253,7 +294,7 @@ int _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
     }
     sqlite3_stmt *stmt = nil;
     if (_cachedSQL) {
-        stmt = (sqlite3_stmt *)CFDictionaryGetValue(_dbStmtCache, (__bridge const void *)(sql));
+        stmt = (sqlite3_stmt *)CFDictionaryGetValue(_stmtCache, (__bridge const void *)(sql));
     }
     if (!stmt) {
         int result = sqlite3_prepare_v2(_db, sql.UTF8String, -1, &stmt, NULL);
@@ -264,7 +305,7 @@ int _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
             return NULL;
         }
         if (_cachedSQL) {
-            CFDictionarySetValue(_dbStmtCache, (__bridge const void *)(sql), stmt);
+            CFDictionarySetValue(_stmtCache, (__bridge const void *)(sql), stmt);
         }
     } else {
         sqlite3_reset(stmt);
@@ -336,7 +377,9 @@ int _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
     }
     int timestamp = (int)time(NULL);
     sqlite3_bind_text(stmt, 1, key.UTF8String, -1, NULL);
-    sqlite3_bind_text(stmt, 2, fileName.UTF8String, -1, NULL);
+    if (fileName) {
+        sqlite3_bind_text(stmt, 2, fileName.UTF8String, -1, NULL);
+    }
     sqlite3_bind_int(stmt, 3, (int)value.length);
     if (store) {
         sqlite3_bind_blob(stmt, 4, value.bytes, (int)value.length, 0);
@@ -675,7 +718,7 @@ int _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
     if (_db) {
         if ([self _close]) {
             _db = NULL;
-            _dbStmtCache = NULL;
+            _stmtCache = NULL;
         }
     }
     [[NSFileManager defaultManager] removeItemAtPath:[_rootPath

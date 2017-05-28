@@ -297,8 +297,8 @@ static int64_t _HYDiskSpaceFree()
 
     //小于16k的数据只存数据库，大于16k的文件只存文件
     BOOL dbStorageOnly = data.length > KHYCacheDBStorageThresholdSize ? NO : YES;
+    NSString *fileName = dbStorageOnly ? nil:HYMD5(key);
     lock();
-    NSString *fileName = HYMD5(key);
     BOOL finishDB = [_db saveItemWithKey:key
                    value:data
                 fileName:fileName

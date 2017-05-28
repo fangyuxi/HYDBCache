@@ -34,6 +34,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign) BOOL logsEnabled;
 
+/**
+ 数据库忙碌的时候重试的时间间隔，默认为0，即不重试
+ */
+@property (nonatomic, assign) NSTimeInterval maxBusyRetryTimeInterval;
+
 #pragma mark - Initializer
 
 /**

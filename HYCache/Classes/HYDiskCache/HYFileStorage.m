@@ -29,7 +29,7 @@
 
 - (BOOL)writeData:(NSData *)data fileName:(NSString *)fileName{
     NSString *path = [_dataPath stringByAppendingPathComponent:fileName];
-    BOOL finish = [data writeToFile:path atomically:YES];
+    BOOL finish = [data writeToFile:path atomically:NO];
     return finish;
 }
 
