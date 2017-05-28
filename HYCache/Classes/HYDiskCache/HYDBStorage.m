@@ -30,6 +30,7 @@ typedef int(^HYDBRunnerExecuteStatementsCallbackBlock)(NSDictionary *resultsDict
     
     NSString *_rootPath;
     NSString *_dbPath;
+    BOOL _cachedSQL;
 }
 
 // query callback. avoid clang blabla.
@@ -73,6 +74,7 @@ int _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
 {
     self = [super init];
     _dbPath = [path copy];
+    _cachedSQL = YES;
     NSError *error;
     if (![[NSFileManager defaultManager] createDirectoryAtPath:_dbPath
                                    withIntermediateDirectories:YES
@@ -93,8 +95,7 @@ int _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
             [self _close];
             return nil;
         }
-    }
-    else {
+    }else {
         return nil;
     }
     return nil;
@@ -251,7 +252,7 @@ int _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
         return NULL;
     }
     sqlite3_stmt *stmt = nil;
-    if (self.cachedSQL) {
+    if (_cachedSQL) {
         stmt = (sqlite3_stmt *)CFDictionaryGetValue(_dbStmtCache, (__bridge const void *)(sql));
     }
     if (!stmt) {
@@ -262,7 +263,7 @@ int _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
             }
             return NULL;
         }
-        if (self.cachedSQL) {
+        if (_cachedSQL) {
             CFDictionarySetValue(_dbStmtCache, (__bridge const void *)(sql), stmt);
         }
     } else {
@@ -289,7 +290,7 @@ int _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
     sqlite3_bind_int(stmt, 1, (int)time(NULL));
     sqlite3_bind_text(stmt, 2, key.UTF8String, -1, NULL);
     int result = sqlite3_step(stmt);
-    if (!self.cachedSQL) {
+    if (!_cachedSQL) {
         sqlite3_finalize(stmt);
     }
     if (result != SQLITE_DONE) {
@@ -347,7 +348,7 @@ int _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
     sqlite3_bind_int(stmt, 6, timestamp);
     sqlite3_bind_int(stmt, 7, (int)maxAge);
     int result = sqlite3_step(stmt);
-    if (!self.cachedSQL) {
+    if (!_cachedSQL) {
         sqlite3_finalize(stmt);
     }
     if (result != SQLITE_DONE) {
@@ -414,7 +415,7 @@ int _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
             }
         }
     }
-    if (!self.cachedSQL) {
+    if (!_cachedSQL) {
         sqlite3_finalize(stmt);
     }
     return item;
@@ -489,7 +490,7 @@ int _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
         char *cStringFileName = (char *)sqlite3_column_text(stmt, 0);
         (cStringFileName == NULL) ? (fileName = nil) : (fileName = [NSString stringWithUTF8String:cStringFileName]);
     }
-    if (!self.cachedSQL) {
+    if (!_cachedSQL) {
         sqlite3_finalize(stmt);
     }
     return fileName == nil ? NO : YES;
@@ -529,7 +530,7 @@ int _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
             break;
         }
     } while (1);
-    if (!self.cachedSQL) {
+    if (!_cachedSQL) {
         sqlite3_finalize(stmt);
     }
     
@@ -550,7 +551,7 @@ int _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
             }
             return fileNames;
         }
-        if (!self.cachedSQL) {
+        if (!_cachedSQL) {
             sqlite3_finalize(stmtDelete);
         }
     }
@@ -597,7 +598,7 @@ int _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
             break;
         }
     } while (1);
-    if (!self.cachedSQL) {
+    if (!_cachedSQL) {
         sqlite3_finalize(stmt);
     }
     //删除
@@ -621,34 +622,13 @@ int _HYDBRunnerExecuteBulkSQLCallback(void *theBlockAsVoid,
             }
             return fileNames;
         }
-        if (!self.cachedSQL) {
+        if (!_cachedSQL) {
             sqlite3_finalize(stmt);
         }
     }
     
     return fileNames;
 }
-
-//- (NSInteger)getItemCountWithKey:(NSString *)key {
-//    NSString *sql = @"select count(key) from manifest where key = ?1;";
-//    sqlite3_stmt *stmt = [self _prepareStmt:sql];
-//    if (!stmt) {
-//        return -1;
-//    }
-//    sqlite3_bind_text(stmt, 1, key.UTF8String, -1, NULL);
-//    NSInteger result = sqlite3_step(stmt);
-//    if (result != SQLITE_ROW) {
-//        if (_logsEnabled){
-//            NSLog(@"%s line:%d sqlite query error (%d): %s",
-//                  __FUNCTION__,
-//                  __LINE__,
-//                  result,
-//                  sqlite3_errmsg(_db));
-//        }
-//        return -1;
-//    }
-//    return sqlite3_column_int(stmt, 0);
-//}
 
 - (NSInteger)getTotalItemSize {
     NSString *sql = @"select sum(size) from manifest;";

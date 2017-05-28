@@ -14,7 +14,7 @@
 @implementation WBCacheBenchMaker
 
 - (void)startDisk{
-    [self writeLarge];
+    //[self writeLarge];
     [self writeSmall];
     //[self writeLargeMultiThreadLarge];
     [self writeLargeMultiThreadSmall];
@@ -23,7 +23,7 @@
 - (void)writeSmall{
     HYDiskCache *hyDisk = [[HYDiskCache alloc] initWithName:@"hyDiskSmall"];
     
-    NSInteger count = 1000;
+    NSInteger count = 10000;
     NSMutableArray *keys = [NSMutableArray new];
     for (int i = 0; i < count; i++) {
         NSString *key = @(i).description;
@@ -143,10 +143,9 @@
     @autoreleasepool {
         for (int i = 0; i < count; i++) {
             dispatch_group_enter(group);
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                [hyDisk setObject:dataValue forKey:keys[i]];
+            [hyDisk setObject:dataValue forKey:keys[i] withBlock:^(HYDiskCache * _Nonnull cache, NSString * _Nonnull key, id  _Nullable object) {
                 dispatch_group_leave(group);
-            });
+            }];
         }
     }
     dispatch_notify(group, dispatch_get_main_queue(), ^(){
