@@ -1,5 +1,5 @@
 PODS:
-  - HYDBCache (0.7)
+  - HYDBCache (0.9)
 
 DEPENDENCIES:
   - HYDBCache (from `../`)
@@ -9,7 +9,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  HYDBCache: 4f3fbeb3f93d3799ec02a05415141e460a100c48
+  HYDBCache: 41fa6079b294f876f7934e9df062d26b62c5a07c
 
 PODFILE CHECKSUM: 2704ae4347c42e6d348c42dfab925e442cf89514
 
