@@ -13,15 +13,8 @@
 
 @implementation WBCacheBenchMaker
 
-- (void)startDisk{
-    [self writeLarge];
-    //[self writeSmall];
-    //[self writeLargeMultiThreadLarge];
-    //[self writeLargeMultiThreadSmall];
-}
-
-- (void)writeSmall{
-    HYDiskCache *hyDisk = [[HYDiskCache alloc] initWithName:@"hyDiskSmall"];
+- (void)writeSmallWithBlock:(void(^)(NSString *log))block{
+    HYDiskCache *hyDisk = [[HYDiskCache alloc] initWithName:@"HYDiskSmall"];
     
     NSInteger count = 1000;
     NSMutableArray *keys = [NSMutableArray new];
@@ -34,10 +27,11 @@
         [dataValue appendBytes:&i length:1];
     }
     
+    
     NSTimeInterval begin, end, time;
     
     printf("\n===========================\n");
-    printf("hyDisk cache set 1000 key-value pairs (value is NSData(15KB))\n");
+    printf("HYDisk cache set 1000 key-value pairs (value is NSData(15KB))\n");
     
     begin = CACurrentMediaTime();
     @autoreleasepool {
@@ -48,9 +42,10 @@
     end = CACurrentMediaTime();
     time = end - begin;
     printf("hyDisk cache large time:     %8.2f\n", time * 1000);
+    
+    block([NSString stringWithFormat:@"HYDisk cache large time:    %8.2f\n",time * 1000]);
 }
-
-- (void)writeLarge{
+- (void)writeLargeWithBlock:(void(^)(NSString *log))block{
     HYDiskCache *hyDisk = [[HYDiskCache alloc] initWithName:@"hyDiskLarge"];
     
     NSInteger count = 1000;
@@ -78,9 +73,9 @@
     end = CACurrentMediaTime();
     time = end - begin;
     printf("hyDisk cache large time:     %8.2f\n", time * 1000);
+    block([NSString stringWithFormat:@"HYDisk cache large time:    %8.2f\n",time * 1000]);
 }
-
-- (void)writeLargeMultiThreadLarge{
+- (void)writeLargeMultiThreadLargeWithBlock:(void(^)(NSString *log))block{
     __block HYDiskCache *hyDisk = [[HYDiskCache alloc] initWithName:@"hyDiskMultiThreadLarge"];
     
     NSInteger count = 1000;
@@ -115,10 +110,10 @@
         end = CACurrentMediaTime();
         time = end - begin;
         printf("hyDisk cache MultiThread large time:     %8.2f\n", time * 1000);
+        block([NSString stringWithFormat:@"HYDisk cache large time:    %8.2f\n",time * 1000]);
     });
 }
-
-- (void)writeLargeMultiThreadSmall{
+- (void)writeSmallMultiThreadLargeWithBlock:(void(^)(NSString *log))block{
     HYDiskCache *hyDisk = [[HYDiskCache alloc] initWithName:@"hyDiskMultiThreadSmall"];
     
     NSInteger count = 1000;
@@ -152,8 +147,8 @@
         end = CACurrentMediaTime();
         time = end - begin;
         printf("hyDisk cache MultiThread large time:     %8.2f\n", time * 1000);
+        block([NSString stringWithFormat:@"HYDisk cache large time:    %8.2f\n",time * 1000]);
     });
 }
-
 
 @end

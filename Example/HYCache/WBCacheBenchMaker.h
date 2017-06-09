@@ -10,6 +10,9 @@
 
 @interface WBCacheBenchMaker : NSObject
 
-- (void)startDisk;
+- (void)writeSmallWithBlock:(void(^)(NSString *log))block;
+- (void)writeLargeWithBlock:(void(^)(NSString *log))block;
+- (void)writeLargeMultiThreadLargeWithBlock:(void(^)(NSString *log))block;
+- (void)writeSmallMultiThreadLargeWithBlock:(void(^)(NSString *log))block;
 
 @end
